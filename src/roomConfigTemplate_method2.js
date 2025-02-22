@@ -26,10 +26,6 @@ module.exports = function(API){
   this.modifyClientPing = function(ping, customData){return newPing;};
   this.modifyClientPingAfter = function(ping, customData){return newPing;};
 
-  this.modifyFrameNoBefore = function(frameNo){return [newFrameNo/*, customData*/];};
-  this.modifyFrameNo = function(frameNo, customData){return newFrameNo;};
-  this.modifyFrameNoAfter = function(frameNo, customData){return newFrameNo;};
-
   this.onBeforeOperationReceived = function(type, msg, globalFrameNo, clientFrameNo){/*return customData;*/};
   this.onOperationReceived = function(type, msg, globalFrameNo, clientFrameNo, customData){return true;};
   this.onAfterOperationReceived = function(type, msg, globalFrameNo, clientFrameNo, customData){return true;};

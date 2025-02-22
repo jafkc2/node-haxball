@@ -732,7 +732,7 @@ module.exports = function(API){
           //calculate the player paths to all boxes and choose the lowest cost path
           var playerPaths = CalcualtePlayerPaths(lvl, ghostBoxes, boxPaths);
           var bestPath = playerPaths[1];
-          var playerPath = playerPaths[0][bestPath][0];
+          var playerPath = playerPaths[0][bestPath][0]; // CAUTION: Sometimes playerPaths[0][bestPath] is null, so this line will throw error.
           var boxPath = boxPaths[bestPath][0];
       
           //remove all walls on the player's path

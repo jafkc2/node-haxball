@@ -3768,7 +3768,7 @@ function RemoveSpawnPointTool(){
     zoomPan_onMouseMove(event);
     var threshold = renderer.transformPixelDistanceToMapDistance(15);
     [highlightedSpawnPointIndex, highlightedSpawnPointTeam] = Query.getSpawnPointIndexAtMapCoord(room.state, thisTool.movedMapCoord, threshold);
-    var arr = (highlightedSpawnPointTeam==1) ? room.gameState.stadiumstadium.redSpawnPoints : room.gameState.stadium.blueSpawnPoints;
+    var arr = (highlightedSpawnPointTeam==1) ? room.gameState.stadium.redSpawnPoints : room.gameState.stadium.blueSpawnPoints;
     highlightedSpawnPointPos = arr[highlightedSpawnPointIndex];
   }
   
@@ -4729,24 +4729,7 @@ function onload(){
   toolDialog = makeDialog("Tool Properties");
   document.body.appendChild(toolDialog.element);
   initToolbars();
-  API = abcHaxballAPI({
-    setTimeout: window.setTimeout,
-    clearTimeout: window.clearTimeout,
-    setInterval: window.setInterval,
-    clearInterval: window.clearInterval,
-    console: window.console,
-    requestAnimationFrame: window.requestAnimationFrame,
-    cancelAnimationFrame: window.cancelAnimationFrame,
-    RTCPeerConnection: window.RTCPeerConnection, 
-    RTCIceCandidate: window.RTCIceCandidate, 
-    RTCSessionDescription: window.RTCSessionDescription, 
-    crypto: window.crypto,
-    WebSocket: window.WebSocket,
-    XMLHttpRequest: window.XMLHttpRequest,
-    performance: window.performance,
-    JSON5: window.JSON5,
-    pako: window.pako
-  }, {
+  API = abcHaxballAPI(window, {
     noVariableValueChangeEvent: true
   });
 

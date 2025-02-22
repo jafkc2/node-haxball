@@ -135,9 +135,9 @@ Room.create({
 
 - `Library constructor(object, config)`: Initializes the library with given parameters.
   - `object`: These are objects/functions that directly affect the core functionalities. You should usually pass "window" here, because most of these objects reside there.
-    - `setTimeout`, `clearTimeout`, `setInterval`, `clearInterval`, `requestAnimationFrame`, `cancelAnimationFrame`, (if you are on a custom environment such as NW.js or Electron, these functions should be binded to browser's window object before being passed on.)
+    - `setTimeout`, `clearTimeout`, `setInterval`, `clearInterval`, `requestAnimationFrame`, `cancelAnimationFrame`, `fetch`, (if you are on a custom environment such as NW.js or Electron, these functions should be binded to browser's window object before being passed on.)
     - `console`, `performance`, `crypto`, (browser's window object should have these objects as well.)
-    - `RTCPeerConnection`, `RTCIceCandidate`, `RTCSessionDescription`, `WebSocket`, `XMLHttpRequest`, (these classes are used by Haxball for communication, browser's window object should have these classes as well.)
+    - `RTCPeerConnection`, `RTCIceCandidate`, `RTCSessionDescription`, `WebSocket`, (these classes are used by Haxball for communication, browser's window object should have these classes as well.)
     - `JSON5`, `pako`. (These are two external libraries required by Haxball.)
   - `config`: Custom configuration for backend/proxy server as well as the library itself. Valid object keys are;
     - `backend`: Custom backend configuration. Valid object keys are:
@@ -212,6 +212,7 @@ Room.create({
         - `state`: An object containing all information about the current room state.
         - `gameState`: room's game state information. returns null if game is not active. read-only.
         - `currentPlayerId`: Always returns -1. It is only added for compatibility with renderers. (And it is only used in the initialization code of renderers.)
+        - `maxFrameNo`: returns the maximum frame number in the replay file.
       - functions:
         - `length()`: Returns the length of replay content in milliseconds.
         - `getTime()`: Returns the current time in milliseconds.
@@ -653,9 +654,6 @@ Room.create({
     - `[newPing, customData] = modifyClientPingBefore(ping)`: prepares a custom data object to send to all plugins while setting current player's `ping`. `customData=false` means "don't call callbacks". client-only.
     - `newPing = modifyClientPing(ping, customData)`: set current player's `ping`. client-only.
     - `newPing = modifyClientPingAfter(ping, customData)`: set current player's `ping`. client-only.
-    - `[newFrameNo, customData] = modifyFrameNoBefore(frameNo)`: prepares a custom data object to send to all plugins while setting current player's `frameNo`. `customData=false` means "don't call callbacks". causes your player to look laggy to your opponents, especially on extrapolated clients. client-only.
-    - `newFrameNo = modifyFrameNo(frameNo)`: set current player's `frameNo`. causes your player to look laggy to your opponents, especially on extrapolated clients. client-only.
-    - `newFrameNo = modifyFrameNoAfter(frameNo, customData)`: set current player's `frameNo`. causes your player to look laggy to your opponents, especially on extrapolated clients. client-only.
     - `customData = onBeforeOperationReceived(type, msg, globalFrameNo, clientFrameNo)`: the host callback that is called only once for each message received from clients, and its return value is passed as customData to onOperationReceived callback. this callback is useful for parsing chat messages and other stuff that you would like to do only once, before the room callback or any plugin callbacks are called. The default callback value is a function that parses a chat message and returns `{ isCommand: boolean, data: string array }` where `isCommand = text.startsWith("!")` and `data = text.trimEnd().split(" ")`. 
     - `acceptEvent = onOperationReceived(type, msg, globalFrameNo, clientFrameNo, customData)`: runs for each message received from clients. `type` is the type of the operation, `msg` is the original message, `customData` is the return value of callback `onBeforeOperationReceived(type, msg, globalFrameNo, clientFrameNo)`. `onOperationReceived` is called only once for each message, before all `onOperationReceived` callbacks of all plugins are called for the same message. you may modify msg's contents here as you wish. `return true` -> accept event, `return false` -> block message from being processed, `throw exception` -> break message sender player's connection. host-only.
     - `acceptEvent = onAfterOperationReceived(type, msg, globalFrameNo, clientFrameNo, customData)`: runs for each message received from clients. `type` is the type of the operation, `msg` is the original message, `customData` is the return value of callback `onOperationReceived(type, globalFrameNo, clientFrameNo, msg)`. `onAfterOperationReceived` is called only once for each message, after all `onOperationReceived` callbacks of all plugins are called for the same message. you may modify msg's contents here as you wish. `return true` -> accept event, `return false` -> block message from being processed, `throw exception` -> break message sender player's connection. host-only.
@@ -849,7 +847,6 @@ Room.create({
     - `[modifiedName, modifiedFlag, modifiedAvatar] = modifyPlayerData(playerId, name, flag, avatar, conn, auth, customData)`: set player's data just before player has joined the room. This callback may also be async, or return a Promise that will return the array. `return null` -> player is not allowed to join. `customData` is an optional data object returned from `room.modifyPlayerDataBefore`. host-only.
     - `newPing = modifyPlayerPing(playerId, ping, customData)`: set player's `ping`. `customData` is an optional data object returned from `room.modifyPlayerPingBefore`. host-only.
     - `newPing = modifyClientPing(ping, customData)`: set current player's `ping`. `customData` is an optional data object returned from `room.modifyClientPingBefore`. client-only.
-    - `newFrameNo = modifyFrameNo(frameNo, customData)`: set current player's `frameNo`. causes your player to look laggy to your opponents, especially on extrapolated clients. `customData` is an optional data object returned from `room.modifyFrameNoBefore`. client-only.
     - `acceptEvent = onOperationReceived(type, msg, globalFrameNo, clientFrameNo, customData)`:  runs for each message received from clients. `type` is the type of the operation, `msg` is the original message. you may modify `msg`'s contents here as you wish. `customData` is an optional data object returned from `room.onBeforeOperationReceived`. `return true` -> accept event, `return false` -> block message from being processed, `throw exception` -> break message sender player's connection. host-only.
 
   - `callbacks`:
@@ -1033,7 +1030,6 @@ Room.create({
 <div> - Lots of testing and various plugins by <a href="https://github.com/0x00214131812049">0x00 <img width="20" src="https://avatars.githubusercontent.com/u/96322566?v=4"/></a></div>
 <div> - Lots of testing and various plugins by <a href="https://github.com/jerryoldson">JerryOldson <img width="20" src="https://avatars.githubusercontent.com/u/140029469?v=4"/></a></div>
 <div> - Lots of testing and Portuguese language translation by <a href="https://github.com/guguxh">Juze <img width="20" src="https://avatars.githubusercontent.com/u/61206153?v=4"/></a></div>
-<div> - Room.modifyFrameNo by <a href="https://github.com/hxgd1">Punisher <img width="20" src="https://avatars.githubusercontent.com/u/114198188?v=4"/></a></div>
 <div> - Some links fixed by <a href="https://github.com/ChasmSolacer">ChasmSolacer <img width="20" src="https://avatars.githubusercontent.com/u/46286197?v=4"/></a></div>
 <div> - Autoplay bot examples improved by <a href="https://github.com/K0nfy">K0nfy <img width="20" src="https://avatars.githubusercontent.com/u/27099419?v=4"/></a></div>
 <div> - Docs formatted by <a href="https://github.com/uzayyli">uzaylı <img width="20" src="https://avatars.githubusercontent.com/u/87779551?v=4"/></a></div>

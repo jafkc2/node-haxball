@@ -1,22 +1,5 @@
 function init(headless, roomCallback){
-  const API = abcHaxballAPI({
-    setTimeout: window.setTimeout,
-    clearTimeout: window.clearTimeout,
-    setInterval: window.setInterval,
-    clearInterval: window.clearInterval,
-    console: window.console,
-    requestAnimationFrame: window.requestAnimationFrame,
-    cancelAnimationFrame: window.cancelAnimationFrame,
-    RTCPeerConnection: window.RTCPeerConnection, 
-    RTCIceCandidate: window.RTCIceCandidate, 
-    RTCSessionDescription: window.RTCSessionDescription, 
-    crypto: window.crypto,
-    WebSocket: window.WebSocket,
-    XMLHttpRequest: window.XMLHttpRequest,
-    performance: window.performance,
-    JSON5: window.JSON5,
-    pako: window.pako
-  },{
+  const API = abcHaxballAPI(window,{
     noVariableValueChangeEvent: true
     /*
     proxy: {
@@ -152,8 +135,11 @@ function init(headless, roomCallback){
         params = readWatchStreamParameters(q);
         break;
       }
-      default:
-        throw "Unrecognized action, params:"+JSON.stringify(q);
+      default:{
+        console.log("Started with unrecognized parameters.");
+        window.API = API;
+        return;
+      }
     }
   }catch(ex){
     alert(ex);

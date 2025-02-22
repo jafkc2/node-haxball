@@ -15,7 +15,6 @@ module.exports = function(API){
   this.modifyPlayerData = function(playerId, name, flag, avatar, conn, auth, customData){return [modifiedNick, modifiedAvatar, modifiedFlag];};
   this.modifyPlayerPing = function(playerId, ping, customData){return newPing;};
   this.modifyClientPing = function(ping, customData){return newPing;};
-  this.modifyFrameNo = function(frameNo){return newFrameNo;};
   this.onOperationReceived = function(type, msg, globalFrameNo, clientFrameNo, customData){return true;};
 
   this.onRoomLink = function(link, customData){};

@@ -1875,6 +1875,11 @@ declare namespace MainReturnType {
     angle: number;
 
     /**
+     * The angle of stripes shown inside the player disc object. (in degrees)
+     */
+    readonly angleDeg: number;
+
+    /**
      * Color of the avatar text. Range: -1 <= `text` < 16777216. 
      *   - This value can be converted into a rgba string via API's `Utils.numberToColor` function.
      *   - The special value `-1` means `transparent` color.
@@ -2190,6 +2195,11 @@ declare namespace MainReturnType {
      * The team that conceded the last goal.
      */
     goalConcedingTeam: Team;
+
+    /**
+     * Whether the game is currently paused or not.
+     */
+    readonly paused: boolean;
   
     /**
      * The extrapolated version of this GameState, or `null` if the data is not available.
@@ -3055,15 +3065,6 @@ declare namespace MainReturnType {
      * @returns The new ping value of the current player.
      */
     modifyClientPing?: (ping: int, customData?: any)=>number,
-
-    /**
-     * If defined, expects us to return the physics engine's new current `frameNo` value, which tells the physics engine that it is currently on a different frame than expected, which causes your player to look laggy to your opponents, especially on extrapolated clients.
-     * 
-     * @param frameNo Current frameNo value of the physics engine.
-     * 
-     * @returns The new frameNo value of the physics engine.
-     */
-    modifyFrameNo?: (frameNo: int, customData?: any)=>int,
 
     /**
      * If defined, runs for each message received from all clients in a host room, before they are processed and sent to all clients. This is the most important callback inside a host room; all permission logic should reside here. You are also allowed to freely modify the contents of all messages here.
@@ -4372,25 +4373,6 @@ declare namespace MainReturnType {
      * @returns The new ping value of the current player.
      */
     modifyClientPingAfter?: (ping: int, customData?: any)=>number,
-
-    /**
-     * If defined, expects us to return the physics engine's new current `frameNo` value, which tells the physics engine that it is currently on a different frame than expected, which causes your player to look laggy to your opponents, especially on extrapolated clients.
-     * 
-     * @param frameNo Current frameNo value of the physics engine.
-     * 
-     * @returns The new frameNo value of the physics engine.
-     */
-    modifyFrameNoBefore?: (frameNo: int)=>int,
-
-    /**
-     * If defined, expects us to return the physics engine's new current `frameNo` value, which tells the physics engine that it is currently on a different frame than expected, which causes your player to look laggy to your opponents, especially on extrapolated clients.
-     * 
-     * @param frameNo Current frameNo value of the physics engine.
-     * @param customData Any custom data that might be returned from the previous addon's calback.
-     * 
-     * @returns The new frameNo value of the physics engine.
-     */
-    modifyFrameNoAfter?: (frameNo: int, customData?: any)=>int,
 
     /**
      * If defined, runs for each message received from all clients in a host room, before they are processed and sent to all clients. This is the most important callback inside a host room; all permission logic should reside here. You are also allowed to freely modify the contents of all messages here.
@@ -8842,6 +8824,11 @@ declare namespace MainReturnType {
     readonly gameState: GameState | null;
 
     /**
+     * The maximum frame number in the replay file.
+     */
+    readonly maxFrameNo: int;
+
+    /**
      * This is a read-only property that always returns -1. It is only added for compatibility with renderers. (And it is only used in the initialization code of renderers.)
      */
     readonly currentPlayerId: int;
@@ -9935,11 +9922,6 @@ declare namespace MainReturnType {
       export interface Team {
 
         /**
-         * The rival of current Team object.
-         */
-        rival: Team;
-
-        /**
          * The id of current Team object.
          */
         id: int;
@@ -9948,16 +9930,6 @@ declare namespace MainReturnType {
          * The numeric color value of current Team object.
          */
         color: int;
-
-        /**
-         * The name of current Team object.
-         */
-        name: string;
-
-        /**
-         * Object that stores custom color values to render striped team colors.
-         */
-        colors: TeamColors;
       }
     }
 
@@ -10016,6 +9988,11 @@ declare class WindowLike {
   cancelAnimationFrame: (handle: number)=>void;
 
   /**
+   * Function, used by Haxball for communication. Browser's window object should have it.
+   */
+  fetch: fetchLike;
+
+  /**
    * Object, used by Haxball. Browser's window object should have it.
    */
   console: ConsoleLike;
@@ -10049,11 +10026,6 @@ declare class WindowLike {
    * Class, used by Haxball for communication. Browser's window object should have it.
    */
   WebSocket: WebSocketLike;
-
-  /**
-   * Class, used by Haxball for communication. Browser's window object should have it.
-   */
-  XMLHttpRequest: XMLHttpRequestLike;
 
   /**
    * External library object required by Haxball.

@@ -44,7 +44,7 @@ module.exports = function(API, params){
       min: 0,
       max: Infinity
     },
-    value: "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/imageRenderer/kirby-puffy.png"
+    value: "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/imageRenderer/kirby-puffy.png"
   });
 
   this.defineVariable({
@@ -55,7 +55,7 @@ module.exports = function(API, params){
       min: 0,
       max: Infinity
     },
-    value: "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/imageRenderer/image.png"
+    value: "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/imageRenderer/image.png"
   });
   
   this.defineVariable({

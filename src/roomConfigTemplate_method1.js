@@ -12,10 +12,6 @@ function defineRoomCallbacks(room){
   room.modifyClientPing = function(ping, customData){return newPing;};
   room.modifyClientPingAfter = function(ping, customData){return newPing;};
 
-  room.modifyFrameNoBefore = function(frameNo){return [newFrameNo/*, customData*/];};
-  room.modifyFrameNo = function(frameNo, customData){return newFrameNo;};
-  room.modifyFrameNoAfter = function(frameNo, customData){return newFrameNo;};
-
   room.onBeforeOperationReceived = function(type, msg, globalFrameNo, clientFrameNo){/*return customData;*/};
   room.onOperationReceived = function(type, msg, globalFrameNo, clientFrameNo, customData){return true;};
   room.onAfterOperationReceived = function(type, msg, globalFrameNo, clientFrameNo, customData){return true;};

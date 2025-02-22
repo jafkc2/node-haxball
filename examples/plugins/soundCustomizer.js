@@ -12,19 +12,19 @@
         name: "collisionSound",
         description: "The sound will be played when a collision happens.", 
         type: VariableType.String,
-        value: "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/soundCustomizer/Voicy__Screaming_SFX.mp3"
+        value: "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/soundCustomizer/Voicy__Screaming_SFX.mp3"
     });
     this.defineVariable({
         name: "ballKickSound",
         description: "The sound will be played when a player kicks ball.", 
         type: VariableType.String,
-        value: "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/soundCustomizer/Voicy_Kirby_Voice_SFX.mp3"
+        value: "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/soundCustomizer/Voicy_Kirby_Voice_SFX.mp3"
     });
     this.defineVariable({
         name: "winningSound",
         description: "The sound will be played when current player wins.", 
         type: VariableType.String,
-        value: "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/soundCustomizer/Voicy_Kirby_Wins.mp3"
+        value: "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/soundCustomizer/Voicy_Kirby_Wins.mp3"
     });
     this.defineVariable({
         name: "losingSound",
@@ -36,20 +36,20 @@
         name: "cPTeamScoreSound",
         description: "The sound will be played when a current player's team scores.", 
         type: VariableType.String,
-        value: "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/soundCustomizer/Voicy_Poyo.mp3"
+        value: "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/soundCustomizer/Voicy_Poyo.mp3"
     })
   
     this.defineVariable({
         name: "opponentScoreSound",
         description: "The sound will be played when opponent team scores.", 
         type: VariableType.String,
-        value: "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/soundCustomizer/Voicy_Kirby_Angry_Voice.mp3"
+        value: "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/soundCustomizer/Voicy_Kirby_Angry_Voice.mp3"
     })
     this.defineVariable({
         name: "onMsgSound",
         description: "The sound will be played when someone sends a message.", 
         type: VariableType.String,
-        value: "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/soundCustomizer/Voicy_Kirby_Notice.mp3"
+        value: "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/soundCustomizer/Voicy_Kirby_Notice.mp3"
     });
     this.defineVariable({
         name: "enableCDVP",

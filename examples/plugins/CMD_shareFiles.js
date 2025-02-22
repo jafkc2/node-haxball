@@ -98,7 +98,7 @@ module.exports = function (API) {
       if (targetId==0)
         that.room.librariesMap.gui?.downloadFile(name, contents);
       else{
-        var writer = Impl.Stream.StreamWriter.create(name.length+contents.byteLength+8, true);
+        var writer = Impl.Stream.Writer.create(name.length+contents.byteLength+8, true);
         writer.writeInt32(byId);
         writer.writeString(name);
         writer.writeArrayBuffer(contents);
@@ -126,7 +126,7 @@ module.exports = function (API) {
     var {type, data, byId} = msg;
     if (type!=1 || byId==0)
       return true;
-    var b = new Impl.Stream.StreamReader(new DataView(data.buffer, data.byteOffset, data.byteLength), true), targetId = b.readInt32();
+    var b = new Impl.Stream.Reader(new DataView(data.buffer, data.byteOffset, data.byteLength), true), targetId = b.readInt32();
     if (!fsEnabled[targetId] || !that.room.getPlayer(targetId))
       return false;
     var name = b.readString(), contents = b.readUint8Array();

@@ -1,6 +1,4 @@
-const abcHaxballAPI = require("./api.js");
+const initAPI = require("./api.js");
 const indexCommon = require("./indexCommon.js");
 
-module.exports = function(window, config){
-  return indexCommon(abcHaxballAPI, window, config);
-}
+module.exports = (window, config)=>indexCommon(initAPI, window, config);

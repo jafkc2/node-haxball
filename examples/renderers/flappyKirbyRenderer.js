@@ -759,13 +759,13 @@ module.exports = function(API, params){
     thisRenderer.followPlayerId = thisRenderer.room.currentPlayerId;
     rendererObj = new HaxballRenderer();
     imgs = [
-      "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/flappyKirby/frame-1.png",
-      "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/flappyKirby/frame-2.png",
-      "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/flappyKirby/frame-3.png",
-      "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/flappyKirby/frame-4.png",
-      "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/flappyKirby/frame-5.png",
-      "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/flappyKirby/frame-6.png",
-      "https://cdn.jsdelivr.net/gh/0x00214131812049/nh-storage@latest/flappyKirby/frame-7.png",
+      "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/flappyKirby/frame-1.png",
+      "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/flappyKirby/frame-2.png",
+      "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/flappyKirby/frame-3.png",
+      "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/flappyKirby/frame-4.png",
+      "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/flappyKirby/frame-5.png",
+      "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/flappyKirby/frame-6.png",
+      "https://cdn.jsdelivr.net/gh/wxyz-abcd/nh-storage@latest/flappyKirby/frame-7.png",
     ].map((x)=>{
       var img = document.createElement("img");
       img.src = x;

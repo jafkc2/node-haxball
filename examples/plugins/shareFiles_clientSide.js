@@ -35,7 +35,7 @@ module.exports = function(API){
       }
       const reader = new FileReader();
       reader.addEventListener("load", (e) => {
-        var writer = Impl.Stream.StreamWriter.create(name.length+size+12, true);
+        var writer = Impl.Stream.Writer.create(name.length+size+12, true);
         writer.writeInt32(that.playerIdToSend);
         writer.writeString(name);
         writer.writeArrayBuffer(e.target.result);
@@ -50,7 +50,7 @@ module.exports = function(API){
   this.onBinaryCustomEvent = function(type, data, byId){
     if (type!=0 || byId!=0)
       return;
-    var b = new Impl.Stream.StreamReader(new DataView(data.buffer, data.byteOffset, data.byteLength), true);
+    var b = new Impl.Stream.Reader(new DataView(data.buffer, data.byteOffset, data.byteLength), true);
     var sourceId = b.readInt32();
     if (!that.room.getPlayer(sourceId))
       return;

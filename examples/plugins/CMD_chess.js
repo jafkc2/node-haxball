@@ -3,7 +3,7 @@ module.exports = function(API){
 
   Object.setPrototypeOf(this, Plugin.prototype);
   Plugin.call(this, "CMD_chess", true, { // "chess" is plugin's name, "true" means "activated just after initialization". Every plugin should have a unique name.
-    version: "0.1",
+    version: "0.2",
     author: "abc & jhlywa",
     description: `This plugin sets up a chess game.`,
     allowFlags: AllowFlags.CreateRoom // We allow this plugin to be activated on CreateRoom only.
@@ -16,6 +16,30 @@ module.exports = function(API){
       restart(that.FEN.length>0 ? that.FEN : null);
     },
     description: "Restarts the game."
+  });
+  
+  this.defineVariable({
+    name: "whiteTime",
+    type: VariableType.Integer,
+    value: 600,
+    range: {
+      min: 10,
+      max: 10000,
+      step: 60
+    },
+    description: "Number of seconds that the white team has initially."
+  });
+  
+  this.defineVariable({
+    name: "blackTime",
+    type: VariableType.Integer,
+    value: 600,
+    range: {
+      min: 10,
+      max: 10000,
+      step: 60
+    },
+    description: "Number of seconds that the black team has initially."
   });
   
   this.defineVariable({
@@ -1864,7 +1888,7 @@ module.exports = function(API){
     }
   }
 
-  var that = this, gameState, permissionCtx, permissionIds, currentPlayer, pickedUp, autoStart = false, autoReorder = false, drawOffered = false, pawnPromotion = null, acceptMoveTeamsForPieces = true, pieceData = [], lastPlayerIdxs = [];
+  var that = this, gameState, permissionCtx, permissionIds, currentPlayer, pickedUp, autoStart = false, autoReorder = false, drawOffered = false, pawnPromotion = null, acceptMoveTeamsForPieces = true, pieceData = [], lastPlayerIdxs = [], timers = null, lastTickTime = null;
 
 	function squareName(x,y){
 		return String.fromCharCode(97+x)+(8-y);
@@ -1884,20 +1908,28 @@ module.exports = function(API){
 
   function createPiece(id, x, y, offsetX, offsetY){
     return new Promise((resolve, reject)=>{
-      var piece = getPiece(x,y);
+      var piece = getPiece(x,y), onBoard = x>=0 && y>=0 && x<8 && y<8, team, name, avatar;
       that.room.fakePlayerLeave(id);
-      if (!piece){
-        resolve();
-        return;
+      if (onBoard){
+        if (!piece){
+          resolve();
+          return;
+        }
+        pieceData[y][x] = {
+          id,
+          piece
+        };
+        var { color, type } = piece, p = props[type];
+        team = (color=="b") ? 2 : 1;
+        name = that.playerNames ? p.name : "";
+        avatar = p.avatar;
       }
-      pieceData[y][x] = {
-        id,
-        piece
-      };
-      var { color, type } = piece;
-      var team = (color=="b") ? 2 : 1, flag = (team==1) ? that.redFlag : that.blueFlag;
-      var p = props[type];
-      that.room.fakePlayerJoin(id, that.playerNames ? p.name : "", flag, p.avatar);
+      else{
+        team = (y<0) ? 2 : 1;
+        name = "";
+        avatar = "";
+      }
+      that.room.fakePlayerJoin(id, name, (team==1) ? that.redFlag : that.blueFlag, avatar);
       Utils.runAfterGameTick(()=>{
         that.room.setPlayerTeam(id, team);
         Utils.runAfterGameTick(()=>{
@@ -1962,7 +1994,7 @@ module.exports = function(API){
     var idx = -1;
     for (var i=0;i<that.room.players.length;i++){
       var p = that.room.players[i];
-      if (p.id>=48000 && p.id<48064)
+      if (p.id>=48000 && p.id<48068)
         continue;
       if (p.team.id==newTurn){
         if ((++idx)==nextPlayerIdx){
@@ -1975,7 +2007,7 @@ module.exports = function(API){
       nextPlayerIdx = 0;
       for (var i=0;i<that.room.players.length;i++){
         var p = that.room.players[i];
-        if (p.id>=48000 && p.id<48064)
+        if (p.id>=48000 && p.id<48068)
           continue;
         if (p.team.id==newTurn){
           currentPlayer = p;
@@ -1996,6 +2028,18 @@ module.exports = function(API){
         });
     }, 5);
   }
+  
+  function formatNumber(n){
+    var s = n+"";
+    if (s.length<2)
+      s="0"+s;
+    return s;
+  }
+  
+  function updateTimer(teamIdMinus1){
+    that.room.fakeSetPlayerAvatar(formatNumber((timers[teamIdMinus1]/60)|0), 48064+teamIdMinus1*2);
+    that.room.fakeSetPlayerAvatar(formatNumber(timers[teamIdMinus1]%60), 48065+teamIdMinus1*2);
+  }
 
   function restart(fen, stopgame=true){
     var boxSize = parseFloat(that.boxSize);
@@ -2005,16 +2049,17 @@ module.exports = function(API){
       return;
     }
   	gameState = chess;
+    timers = [that.whiteTime, that.blackTime];
   	if (stopgame)
       that.room?.stopGame?.();
     var offsetX = -4*boxSize, offsetY = -4*boxSize, playerTeams = {};
     that.room.players.forEach((p)=>{
-      if (p.id>=48000 && p.id<48064)
+      if (p.id>=48000 && p.id<48068)
         return;
       playerTeams[p.id] = p.team.id;
     });
     that.room.players.forEach((p)=>{
-      if (p.id>=48000 && p.id<48064)
+      if (p.id>=48000 && p.id<48068)
         return;
       that.room.setPlayerTeam(p.id, 0);
     });
@@ -2132,15 +2177,19 @@ module.exports = function(API){
     for (var y=0;y<8;y++){
       pieceData[y] = [];
       for (var x=0;x<8;x++)
-        parr.push(createPiece(48000+parr.length, x, y, offsetX, offsetY));
+        parr.push(createPiece(v++, x, y, offsetX, offsetY));
     }
+    parr.push(createPiece(v++, 3, 8, offsetX, offsetY));
+    parr.push(createPiece(v++, 4, 8, offsetX, offsetY));
+    parr.push(createPiece(v++, 3, -1, offsetX, offsetY));
+    parr.push(createPiece(v++, 4, -1, offsetX, offsetY));
     drawOffered = false;
     pawnPromotion = null;
     Promise.all(parr).then(()=>{
       acceptMoveTeamsForPieces = false;
       Utils.runAfterGameTick(()=>{
         that.room.players.forEach((p)=>{
-          if (p.id>=48000 && p.id<48064)
+          if (p.id>=48000 && p.id<48068)
             return;
           that.room.setPlayerTeam(p.id, playerTeams[p.id]);
           resetPlayer(p);
@@ -2153,7 +2202,7 @@ module.exports = function(API){
         Utils.runAfterGameTick(()=>{
           var n = 0;
           var a = that.room?.players?.filter?.((x, i)=>{
-            if ((x.id<48000 || x.id>=48064)&&i<(n+32)){
+            if ((x.id<48000 || x.id>=48068)&&i<(n+32)){
               n++;
               return true;
             }
@@ -2164,6 +2213,9 @@ module.exports = function(API){
             that.room?.reorderPlayers?.(a, false);
             autoReorder = false;
           }
+          lastTickTime = performance.now();
+          updateTimer(0);
+          updateTimer(1);
         }, 4);
       });
     });
@@ -2412,6 +2464,7 @@ module.exports = function(API){
   };
 
   this.finalize = function(){
+    timers = null;
     lastPlayerIdxs = null;
     pieceData = null;
     gameState = null;
@@ -2431,7 +2484,7 @@ module.exports = function(API){
   };
 
   this.onPlayerTeamChange = function(id, teamId, byId){
-    if (id>=48000 && id<48064)
+    if (id>=48000 && id<48068)
       return;
     if (!currentPlayer || currentPlayer.id==id)
       nextPlayer();
@@ -2443,7 +2496,7 @@ module.exports = function(API){
   
   this.onPlayerLeave = function(playerObj, reason, isBanned, byId){
     var { id } = playerObj;
-    if (id>=48000 && id<48064)
+    if (id>=48000 && id<48068)
       return;
     if (currentPlayer?.id==id)
       nextPlayer();
@@ -2459,7 +2512,7 @@ module.exports = function(API){
     if (type==OperationType.ReorderPlayers)
       return autoReorder;
     if (type==OperationType.SetPlayerTeam)
-      return (acceptMoveTeamsForPieces || msg.playerId<48000 || msg.playerId>=48064);
+      return (acceptMoveTeamsForPieces || msg.playerId<48000 || msg.playerId>=48068);
     if (type!=OperationType.SendInput || !gameState)
       return true;
     if (pawnPromotion)
@@ -2567,5 +2620,22 @@ module.exports = function(API){
         return true;
     }
     return false;
+  };
+  
+  this.onGameTick = function(){
+    if (!gameState)
+      return;
+    var tickTime = performance.now();
+    if (tickTime-lastTickTime>1000){
+      var teamMinus1 = gameState.turn()=="w"?0:1, val = --timers[teamMinus1];
+      if (val<=0){
+        announceInfo((gameState.turn()=="w"?"WHITE":"BLACK")+" LOST ON TIME!");
+        setTimeout(()=>{
+          that.room?.stopGame?.();
+        }, 5000);
+      }
+      updateTimer(teamMinus1);
+      lastTickTime += 1000;
+    }
   };
 }

@@ -1,13 +1,14 @@
 const { RTCPeerConnection, RTCIceCandidate, RTCSessionDescription } = require("node-datachannel/polyfill"); // require("@koush/wrtc"); 
 const { Crypto } = require("@peculiar/webcrypto");
 const WebSocket = require("ws");
-const XMLHttpRequest = require("xhr2");
+const fetch = require("node-fetch");
+//const XMLHttpRequest = require("xhr2");
 const perfHooks = require("perf_hooks");
 const JSON5 = require("json5");
 const pako = require("pako");
 
-module.exports = function(abcHaxballAPI, window, config){
-  return abcHaxballAPI(
+module.exports = function(initAPI, window, config){
+  return initAPI(
     {
       setTimeout: window?.setTimeout || setTimeout,
       clearTimeout: window?.clearTimeout || clearTimeout,
@@ -21,7 +22,8 @@ module.exports = function(abcHaxballAPI, window, config){
       RTCSessionDescription: window?.RTCSessionDescription || RTCSessionDescription, 
       crypto: window?.crypto || new Crypto(),
       WebSocket: window?.WebSocket || WebSocket,
-      XMLHttpRequest: window?.XMLHttpRequest || XMLHttpRequest,
+      //XMLHttpRequest: window?.XMLHttpRequest || XMLHttpRequest,
+      fetch: window?.fetch || fetch,
       performance: window?.performance || perfHooks.performance,
       JSON5: window?.JSON5 || JSON5,
       pako: window?.pako || pako

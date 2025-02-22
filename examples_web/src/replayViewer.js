@@ -182,24 +182,7 @@ function onload(){
   gameTime_m2 = gameTime.children.item(2);
   gameTime_s1 = gameTime.children.item(4);
   gameTime_s2 = gameTime.children.item(5);
-  API = abcHaxballAPI({
-    setTimeout: window.setTimeout,
-    clearTimeout: window.clearTimeout,
-    setInterval: window.setInterval,
-    clearInterval: window.clearInterval,
-    console: window.console,
-    requestAnimationFrame: window.requestAnimationFrame,
-    cancelAnimationFrame: window.cancelAnimationFrame,
-    RTCPeerConnection: window.RTCPeerConnection, 
-    RTCIceCandidate: window.RTCIceCandidate, 
-    RTCSessionDescription: window.RTCSessionDescription, 
-    crypto: window.crypto,
-    WebSocket: window.WebSocket,
-    XMLHttpRequest: window.XMLHttpRequest,
-    performance: window.performance,
-    JSON5: window.JSON5,
-    pako: window.pako
-  }, {
+  API = abcHaxballAPI(window, {
     noVariableValueChangeEvent: true
   });
   sound = new Sound();

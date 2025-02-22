@@ -1,27 +1,12 @@
-const API = abcHaxballAPI({
-  setTimeout: window.setTimeout,
-  clearTimeout: window.clearTimeout,
-  setInterval: window.setInterval,
-  clearInterval: window.clearInterval,
-  console: window.console,
-  requestAnimationFrame: window.requestAnimationFrame,
-  cancelAnimationFrame: window.cancelAnimationFrame,
-  RTCPeerConnection: window.RTCPeerConnection, 
-  RTCIceCandidate: window.RTCIceCandidate, 
-  RTCSessionDescription: window.RTCSessionDescription, 
-  crypto: window.crypto,
-  WebSocket: window.WebSocket,
-  XMLHttpRequest: window.XMLHttpRequest,
-  performance: window.performance,
-  JSON5: window.JSON5,
-  pako: window.pako
-}/*, {
+const API = abcHaxballAPI(window, {
+  /*
   proxy: {
     WebSocketChangeOriginAllowed: false,
     WebSocketUrl: "ws://localhost:3000/",
     HttpUrl: "http://localhost:3000/rs/"
   }
-}*/); // if you use our haxballOriginModifier extension, you don't need a proxy server. (But you still have to serve the files, you cannot open the html directly.)
+  */
+}); // if you use our haxballOriginModifier extension, you don't need a proxy server. (But you still have to serve the files, you cannot open the html directly.)
 
 const { OperationType, VariableType, ConnectionState, AllowFlags, Direction, CollisionFlags, CameraFollow, BackgroundType, GamePlayState, BanEntryType, Callback, Utils, Room, Replay, Query, Library, RoomConfig, Plugin, Renderer, Errors, Language, EventFactory, Impl } = API;
 
