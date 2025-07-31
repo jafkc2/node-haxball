@@ -15,7 +15,7 @@ replayData.roomData.players = replayData.roomData.players.filter((x)=>x.id==28);
 replayData.roomData.gameState.physicsState.discs = replayData.roomData.gameState.physicsState.discs.filter((x)=>x.playerId==null || x.playerId==28);
 
 // remove all the events that belong to other players and also remove all the events that are not input events.
-replayData.events = replayData.events.filter((x)=>(x.byId==28 && x.prototype.type==OperationType.SendInput));
+replayData.events = replayData.events.filter((x)=>(x.byId==28 && x.eventType==OperationType.SendInput));
 
 // since there is only one player left, make it the room owner.
 replayData.roomData.players[0].id = 0;

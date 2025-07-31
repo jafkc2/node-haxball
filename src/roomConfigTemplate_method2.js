@@ -39,9 +39,9 @@ module.exports = function(API){
   this.onPlayerBallKick = function(playerId, customData){};
   this.onAfterPlayerBallKick = function(playerId, customData){};
 
-  this.onBeforeTeamGoal = function(teamId){/*return customData;*/};
-  this.onTeamGoal = function(teamId, customData){};
-  this.onAfterTeamGoal = function(teamId, customData){};
+  this.onBeforeTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc){/*return customData;*/};
+  this.onTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc, customData){};
+  this.onAfterTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc, customData){};
 
   this.onBeforeGameEnd = function(winningTeamId){/*return customData;*/};
   this.onGameEnd = function(winningTeamId, customData){};

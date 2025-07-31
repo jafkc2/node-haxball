@@ -1063,7 +1063,7 @@ module.exports = function(API){
       });
       */
     },
-    onTeamGoal: function(teamId){
+    onTeamGoal: function(teamId, goalId, goal, ballDiscId, ballDisc){
       var last = lastTouchedPlayers[lastTouchedPlayers.length-1];
       if (!last)
         return;
@@ -1320,7 +1320,7 @@ module.exports = function(API){
           penaltiesSetupNextTurn();
         });
     },
-    onTeamGoal: function(teamId){
+    onTeamGoal: function(teamId, goalId, goal, ballDiscId, ballDisc){
       if (!penaltySaveTimeout)
         return;
       clearTimeout(penaltySaveTimeout);

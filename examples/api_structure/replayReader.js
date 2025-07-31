@@ -19,7 +19,7 @@ var replayReader = Replay.read(data, {
   },
   /*
   onPlayerBallKick: function(playerId){},
-  onTeamGoal: function(teamId){},
+  onTeamGoal: function(teamId, goalId, goal, ballDiscId, ballDisc){},
   onGameEnd: function(winningTeamId){},
   onPlayerSyncChange: function(playerId, value){},
   onAnnouncement: function(msg, color, style, sound){},

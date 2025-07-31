@@ -15,8 +15,8 @@ function roomCallback(room){ // examples start from here.
     console.log("onPlayerBallKick...", playerId, customData);
   };
 
-  room.onTeamGoal = function(teamId, customData){
-    console.log("onTeamGoal...", teamId, customData);
+  room.onTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc, customData){
+    console.log("onTeamGoal...", teamId, goalId, goal, ballDiscId, ballDisc, customData);
   };
 
   room.onGameEnd = function(winningTeamId, customData){

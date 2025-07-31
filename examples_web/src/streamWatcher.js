@@ -276,7 +276,7 @@ window.onload = ()=>{
         onPlayerBallKick: function (customData) {
           sound.playSound(sound.kick);
         },
-        onTeamGoal: function (teamId, customData) {
+        onTeamGoal: function (teamId, goalId, goal, ballDiscId, ballDisc, customData) {
           sound.playSound(sound.goal);
         },
         onGameEnd: function (winningTeamId, customData) {

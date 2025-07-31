@@ -87,4 +87,23 @@ module.exports = function(API){
   function fakeJoin(){
     that.room.fakePlayerJoin(that.playerId, that.playerName, that.playerFlag, that.playerAvatar, that.playerConn, that.playerAuth);
   }
+
+  // snapshot support
+
+  this.takeSnapshot = function(){
+    var { playerId, playerName, playerFlag, playerAvatar, playerConn, playerAuth } = that;
+    return {
+      playerId, 
+      playerName, 
+      playerFlag, 
+      playerAvatar, 
+      playerConn, 
+      playerAuth
+    };
+  };
+
+  this.useSnapshot = function(snapshot){
+    var { playerId, playerName, playerFlag, playerAvatar, playerConn, playerAuth } = snapshot;
+    Object.assign(that, { playerId, playerName, playerFlag, playerAvatar, playerConn, playerAuth });
+  };
 }

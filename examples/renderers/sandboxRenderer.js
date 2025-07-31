@@ -4,7 +4,7 @@ module.exports = function(API, params){
   Object.setPrototypeOf(this, Renderer.prototype);
   Renderer.call(this, { // Every renderer should have a unique name.
     name: "sandbox",
-    version: "1.6",
+    version: "1.7",
     author: "basro & abc",
     description: `This is a customized renderer with aimbot designed specifically for the new sandbox mode for Haxball. Disable followMode to zoom using mouse wheel.`
   });
@@ -239,6 +239,13 @@ module.exports = function(API, params){
       max: 100,
       step: 0.01
     }
+  });
+
+  this.defineVariable({
+    name: "lowLatency",
+    description: "Desynchronized context for low-latency rendering.",
+    type: VariableType.Boolean,
+    value: true
   });
 
   var thisRenderer = this, { Point, Team, TeamColors } = Impl.Core, roomLibrariesMap = null;;
@@ -512,7 +519,7 @@ module.exports = function(API, params){
     this.canvas = params.canvas; // sa
     this.canvas.mozOpaque = true;
     this.canvas.style.filter = "";
-    this.ctx = this.canvas.getContext("2d", { alpha: false });
+    this.ctx = this.canvas.getContext("2d", { alpha: false, desynchronized: thisRenderer.lowLatency });
     this.grassPattern = this.ctx.createPattern(/*n.Ko*/params.images?.grass, null); // Lo
     this.concretePattern = this.ctx.createPattern(/*n.Vn*/params.images?.concrete, null); // Wn
     this.concrete2Pattern = this.ctx.createPattern(/*n.Tn*/params.images?.concrete2, null); // Un
@@ -1133,7 +1140,7 @@ module.exports = function(API, params){
     rendererObj.updateChatIndicator(id, value);
   };
 
-  this.onTeamGoal = function(teamId, customData){ // Ni (a)
+  this.onTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc, customData){ // Ni (a)
     var tr = rendererObj.textRenderer; // "Red Scores!", "Blue Scores!"
     tr.addText((teamId==Team.red.id) ? tr.redScore : tr.blueScore);
   };
@@ -1280,59 +1287,86 @@ module.exports = function(API, params){
     rendererObj.drawSpawnPoint(point, teamId, radius, selected);
   };
 
-  this.getState = function(){
+  // snapshot support
+
+  this.takeSnapshot = function(){
+    var { extrapolation, showTeamColors, showAvatars, showPlayerIds, zoomCoeff, wheelZoomCoeff, resolutionScale, showChatIndicators, restrictCameraOrigin, followMode, followPlayerId, drawBackground, squarePlayers, currentPlayerDistinction, showInvisibleSegments, transparentDiscBugFix, showInvisibleJoints, showPlanes, showGoals, showVertices, showSegments, showDiscs, showJoints, showPlayers, showSpawnPoints, generalLineWidth, discLineWidth, textLineWidth, lowLatency } = thisRenderer;
     return {
-      origin: new Point(rendererObj.origin.x, rendererObj.origin.y),
-      showTeamColors: this.showTeamColors,
-      showAvatars: this.showAvatars,
-      showPlayerIds: this.showPlayerIds,
-      zoomCoeff: this.zoomCoeff,
-      wheelZoomCoeff: this.wheelZoomCoeff,
-      resolutionScale: this.resolutionScale,
-      showChatIndicators: this.showChatIndicators,
-      restrictCameraOrigin: this.restrictCameraOrigin,
-      followMode: this.followMode,
-      followPlayerId: this.followPlayerId,
-      drawBackground: this.drawBackground,
-      squarePlayers: this.squarePlayers,
-      currentPlayerDistinction: this.currentPlayerDistinction,
-      showInvisibleSegments: this.showInvisibleSegments,
-      showInvisibleJoints: this.showInvisibleJoints,
-      showPlanes: this.showPlanes,
-      showGoals: this.showGoals,
-      showVertices: this.showVertices,
-      showSegments: this.showSegments,
-      showDiscs: this.showDiscs,
-      showJoints: this.showJoints,
-      showPlayers: this.showPlayers,
-      showSpawnPoints: this.showSpawnPoints,
+      origin: {
+        x: rendererObj.origin.x, 
+        y: rendererObj.origin.y
+      },
+      actualZoomCoeff: rendererObj.actualZoomCoeff,
+      lastRenderTime: rendererObj.lastRenderTime,
+      gamePaused: rendererObj.gamePaused,
+      extrapolation, 
+      showTeamColors, 
+      showAvatars, 
+      showPlayerIds, 
+      zoomCoeff, 
+      wheelZoomCoeff, 
+      resolutionScale, 
+      showChatIndicators, 
+      restrictCameraOrigin, 
+      followMode, 
+      followPlayerId, 
+      drawBackground, 
+      squarePlayers, 
+      currentPlayerDistinction, 
+      showInvisibleSegments, 
+      transparentDiscBugFix, 
+      showInvisibleJoints, 
+      showPlanes, 
+      showGoals, 
+      showVertices, 
+      showSegments, 
+      showDiscs, 
+      showJoints, 
+      showPlayers, 
+      showSpawnPoints,
+      generalLineWidth, 
+      discLineWidth, 
+      textLineWidth, 
+      lowLatency
     };
   };
 
-  this.setState = function(state){
-    this.setOrigin(state.origin);
-    this.showTeamColors = state.showTeamColors;
-    this.showAvatars = state.showAvatars;
-    this.showPlayerIds = state.showPlayerIds;
-    this.zoomCoeff = state.zoomCoeff;
-    this.wheelZoomCoeff = state.wheelZoomCoeff;
-    this.resolutionScale = state.resolutionScale;
-    this.showChatIndicators = state.showChatIndicators;
-    this.restrictCameraOrigin = state.restrictCameraOrigin;
-    this.followMode = state.followMode;
-    this.followPlayerId = state.followPlayerId;
-    this.drawBackground = state.drawBackground;
-    this.squarePlayers = state.squarePlayers;
-    this.currentPlayerDistinction = state.currentPlayerDistinction;
-    this.showInvisibleSegments = state.showInvisibleSegments;
-    this.showInvisibleJoints = state.showInvisibleJoints;
-    this.showPlanes = state.showPlanes;
-    this.showGoals = state.showGoals;
-    this.showVertices = state.showVertices;
-    this.showSegments = state.showSegments;
-    this.showDiscs = state.showDiscs;
-    this.showJoints = state.showJoints;
-    this.showPlayers = state.showPlayers;
-    this.showSpawnPoints = state.showSpawnPoints;
+  this.useSnapshot = function(snapshot){
+    var { extrapolation, showTeamColors, showAvatars, showPlayerIds, zoomCoeff, wheelZoomCoeff, resolutionScale, showChatIndicators, restrictCameraOrigin, followMode, followPlayerId, drawBackground, squarePlayers, currentPlayerDistinction, showInvisibleSegments, transparentDiscBugFix, showInvisibleJoints, showPlanes, showGoals, showVertices, showSegments, showDiscs, showJoints, showPlayers, showSpawnPoints, generalLineWidth, discLineWidth, textLineWidth, lowLatency } = snapshot;
+    Object.assign(thisRenderer, {
+      extrapolation, 
+      showTeamColors, 
+      showAvatars, 
+      showPlayerIds, 
+      zoomCoeff, 
+      wheelZoomCoeff, 
+      resolutionScale, 
+      showChatIndicators, 
+      restrictCameraOrigin, 
+      followMode, 
+      followPlayerId, 
+      drawBackground, 
+      squarePlayers, 
+      currentPlayerDistinction, 
+      showInvisibleSegments, 
+      transparentDiscBugFix, 
+      showInvisibleJoints, 
+      showPlanes, 
+      showGoals, 
+      showVertices, 
+      showSegments, 
+      showDiscs, 
+      showJoints, 
+      showPlayers, 
+      showSpawnPoints,
+      generalLineWidth, 
+      discLineWidth, 
+      textLineWidth, 
+      lowLatency
+    });
+    thisRenderer.setOrigin(snapshot.origin);
+    rendererObj.actualZoomCoeff = snapshot.actualZoomCoeff;
+    rendererObj.lastRenderTime = snapshot.lastRenderTime;
+    rendererObj.gamePaused = snapshot.gamePaused;
   };
 };

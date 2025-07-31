@@ -188,6 +188,13 @@ module.exports = function(API, params){
     }
   });
 
+  this.defineVariable({
+    name: "lowLatency",
+    description: "Desynchronized context for low-latency rendering.",
+    type: VariableType.Boolean,
+    value: true
+  });
+
   var thisRenderer = this, { Point, Team, TeamColors } = Impl.Core, animData;
 
   // language-related stuff
@@ -346,7 +353,7 @@ module.exports = function(API, params){
     this.canvas = params.canvas; // sa
     this.canvas.mozOpaque = true;
     this.canvas.style.filter = "";
-    this.ctx = this.canvas.getContext("2d", { alpha: false });
+    this.ctx = this.canvas.getContext("2d", { alpha: false, desynchronized: thisRenderer.lowLatency });
     this.grassPattern = this.ctx.createPattern(/*n.Ko*/params.images?.grass, null); // Lo
     this.concretePattern = this.ctx.createPattern(/*n.Vn*/params.images?.concrete, null); // Wn
     this.concrete2Pattern = this.ctx.createPattern(/*n.Tn*/params.images?.concrete2, null); // Un
@@ -797,7 +804,7 @@ module.exports = function(API, params){
     rendererObj.updateChatIndicator(id, value);
   };
 
-  this.onTeamGoal = function(teamId, customData){ // Ni (a)
+  this.onTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc, customData){ // Ni (a)
     var tr = rendererObj.textRenderer; // "Red Scores!", "Blue Scores!"
     tr.addText((teamId==Team.red.id) ? tr.redScore : tr.blueScore);
   };
@@ -910,5 +917,68 @@ module.exports = function(API, params){
       thisRenderer.zoomIn(event.offsetX, event.offsetY, thisRenderer.wheelZoomCoeff);
     else
       thisRenderer.zoomOut(event.offsetX, event.offsetY, thisRenderer.wheelZoomCoeff);
+  };
+
+  // snapshot support
+
+  this.takeSnapshot = function(){
+    var { extrapolation, showPlayerIds, zoomCoeff, wheelZoomCoeff, resolutionScale, showChatIndicators, restrictCameraOrigin, followMode, followPlayerId, drawBackground, currentPlayerDistinction, showInvisibleSegments, transparentDiscBugFix, animSpeed, playerEdges, generalLineWidth, discLineWidth, textLineWidth, lowLatency } = thisRenderer;
+    return {
+      origin: {
+        x: rendererObj.origin.x, 
+        y: rendererObj.origin.y
+      },
+      actualZoomCoeff: rendererObj.actualZoomCoeff,
+      lastRenderTime: rendererObj.lastRenderTime,
+      gamePaused: rendererObj.gamePaused,
+      extrapolation, 
+      showPlayerIds, 
+      zoomCoeff, 
+      wheelZoomCoeff, 
+      resolutionScale, 
+      showChatIndicators, 
+      restrictCameraOrigin, 
+      followMode, 
+      followPlayerId, 
+      drawBackground, 
+      currentPlayerDistinction, 
+      showInvisibleSegments, 
+      transparentDiscBugFix, 
+      animSpeed, 
+      playerEdges, 
+      generalLineWidth, 
+      discLineWidth, 
+      textLineWidth, 
+      lowLatency
+    };
+  };
+
+  this.useSnapshot = function(snapshot){
+    var { extrapolation, showPlayerIds, zoomCoeff, wheelZoomCoeff, resolutionScale, showChatIndicators, restrictCameraOrigin, followMode, followPlayerId, drawBackground, currentPlayerDistinction, showInvisibleSegments, transparentDiscBugFix, animSpeed, playerEdges, generalLineWidth, discLineWidth, textLineWidth, lowLatency } = snapshot;
+    Object.assign(thisRenderer, {
+      extrapolation, 
+      showPlayerIds, 
+      zoomCoeff, 
+      wheelZoomCoeff, 
+      resolutionScale, 
+      showChatIndicators, 
+      restrictCameraOrigin, 
+      followMode, 
+      followPlayerId, 
+      drawBackground, 
+      currentPlayerDistinction, 
+      showInvisibleSegments, 
+      transparentDiscBugFix, 
+      animSpeed, 
+      playerEdges, 
+      generalLineWidth, 
+      discLineWidth, 
+      textLineWidth, 
+      lowLatency
+    });
+    thisRenderer.setOrigin(snapshot.origin);
+    rendererObj.actualZoomCoeff = snapshot.actualZoomCoeff;
+    rendererObj.lastRenderTime = snapshot.lastRenderTime;
+    rendererObj.gamePaused = snapshot.gamePaused;
   };
 }

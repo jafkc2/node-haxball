@@ -25,9 +25,9 @@ function defineRoomCallbacks(room){
   room.onPlayerBallKick = function(playerId, customData){};
   room.onAfterPlayerBallKick = function(playerId, customData){};
 
-  room.onBeforeTeamGoal = function(teamId){/*return customData;*/};
-  room.onTeamGoal = function(teamId, customData){};
-  room.onAfterTeamGoal = function(teamId, customData){};
+  room.onBeforeTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc){/*return customData;*/};
+  room.onTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc, customData){};
+  room.onAfterTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc, customData){};
 
   room.onBeforeGameEnd = function(winningTeamId){/*return customData;*/};
   room.onGameEnd = function(winningTeamId, customData){};

@@ -149,7 +149,7 @@
      * @param {Number} teamID 
      * @returns {void}
      */
-    this.onTeamGoal = (teamID) =>  playSound((this.room.currentPlayer.team.id === teamID) ? cpTeamScoreSound: opponentScoreSound);
+    this.onTeamGoal = (teamID, goalId, goal, ballDiscId, ballDisc) =>  playSound((this.room.currentPlayer.team.id === teamID) ? cpTeamScoreSound: opponentScoreSound);
     /**
      * 
      * @param {Number} playerId 

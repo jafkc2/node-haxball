@@ -31,7 +31,7 @@ module.exports = function(API, canvas){
   // these callbacks are also available for all plugins.
   this.onRoomLink = function(link, customData){};
   this.onPlayerBallKick = function(playerId, customData){};
-  this.onTeamGoal = function(teamId, customData){};
+  this.onTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc, customData){};
   this.onGameEnd = function(winningTeamId, customData){};
   this.onGameTick = function(customData){};
   this.onPlayerSyncChange = function(playerId, value, customData){};

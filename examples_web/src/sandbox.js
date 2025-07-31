@@ -736,7 +736,7 @@ function initSnapshots(){
       id: snapshotIdCounter++,
       playMode: ePlayMode.checked,
       roomState: room.takeSnapshot(),
-      renderState: renderer.getState(),
+      renderState: renderer.takeSnapshot(),
       name: new Date().toLocaleString(),
       image: canvas.toDataURL()
     });
@@ -756,7 +756,7 @@ function initSnapshots(){
     var snapshot = snapshotArray[idx];
     room.useSnapshot(snapshot.roomState);
     ePlayMode.checked = snapshot.playMode;
-    renderer.setState(snapshot.renderState);
+    renderer.useSnapshot(snapshot.renderState);
     setControlledPlayerId(renderer.followPlayerId);
     updateGUI();
   };
@@ -4836,9 +4836,9 @@ function onload(){
         onPlayerBallKick: ()=>{
           sound.playSound(sound.kick);
         },
-        onTeamGoal: (teamId)=>{
+        onTeamGoal: (teamId, goalId, goal, ballDiscId, ballDisc)=>{
           sound.playSound(sound.goal);
-          renderer.onTeamGoal(teamId);
+          renderer.onTeamGoal(teamId, goalId, goal, ballDiscId, ballDisc);
         },
         onTimeIsUp: ()=>{
           renderer.onTimeIsUp();
@@ -4973,12 +4973,12 @@ function onload(){
       //room.librariesMap.aimbot.active = true;
       renderer.room = room;
       renderer.initialize();
+      initGameMenu();
+      initSnapshots();
       room.setTimeLimit(0, 0);
       room.setScoreLimit(0, 0);
       room.startGame(0);
       room.playerJoin(playerIdCounter++, "abc", "tr", "XX", "fakeIP", "fakeAuth");
-      initGameMenu();
-      initSnapshots();
     }, (err)=>{
       console.log(err);
       alert("Error loading images. Look at console for error details.");

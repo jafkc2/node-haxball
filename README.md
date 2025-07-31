@@ -214,6 +214,7 @@ Room.create({
         - `currentPlayerId`: Always returns -1. It is only added for compatibility with renderers. (And it is only used in the initialization code of renderers.)
         - `maxFrameNo`: returns the maximum frame number in the replay file.
       - functions:
+        - `extrapolate(milliseconds=0)`: extrapolates the current room state for `milliseconds` milliseconds and stores the results in each object's `ext` key. Returns the new extrapolated room state.
         - `length()`: Returns the length of replay content in milliseconds.
         - `getTime()`: Returns the current time in milliseconds.
         - `getCurrentFrameNo()`: Returns the current frame number.
@@ -400,9 +401,11 @@ Room.create({
     - `sandbox(callbacks, options)`: creates a sandbox room.
     
       - Parameters: 
-        - `callbacks`: An object that has the same callbacks as the renderer template.
+        - `callbacks`: An object that has the same callbacks as the renderer template, plus the following:
+          - `filterEvents(event)`: This is a special callback for the sandbox to be able to filter some events. This callback is called for every single event that occurs in the sandbox, and the events that return `false` from this callback are not executed.
         - `options`: An object that may contain the following keys:
           - `controlledPlayerId`: Id of the player to be controlled.
+          - `delayedInit`: Whether to delay the initialization of the sandbox. (You have to manually initialize it later using its `initialize()` function.)
           - `requestAnimationFrame`: Override function for `requestAnimationFrame`. (`null` = use library's default `requestAnimationFrame`.)
           - `cancelAnimationFrame`: Override function for `cancelAnimationFrame`. (`null` = use library's default `cancelAnimationFrame`.)
       
@@ -412,6 +415,11 @@ Room.create({
           - `gameState`: room's game state information. returns null if game is not active. read-only.
           - `currentPlayerId`: Always returns 0. It is only added for compatibility with renderers. (And it is only used in the initialization code of renderers.)
         - functions:
+          - `initialize()`: Initializes the sandbox. (Should only be called if `delayedInit` is `true`.)
+          - `startRecording()`: start recording replay data. returns `true` if succeeded, `false` otherwise. recording should not be started before calling this.
+          - `stopRecording()`: stop recording replay data. returns `UintArray8` data if succeeded, null otherwise. recording should be started before calling this.
+          - `isRecording()`: returns `true` if recording has started; `false` otherwise.
+          - `extrapolate(milliseconds=0)`: extrapolates the current room state for `milliseconds` milliseconds and stores the results in each object's `ext` key. Returns the new extrapolated room state.
           - `setSimulationSpeed(coefficient)`: Changes the speed of the simulation. `coefficient` must be a real number >=0.
             - `coefficient` = 0 : stop simulation.
             - 0 < `coefficient` < 1 : slow-motion simulation.
@@ -426,10 +434,11 @@ Room.create({
           - `playerInput(input, byId)`: sets the input of player(`byId`) to `input`.
           - `playerChat(msg, byId)`: writes chat message(`msg`) as player(`byId`).
           - `setKeyState(state)`: set current key state to `state`. (added for compatibility with normal rooms.)
+          - `reorderPlayers(playerIdList, moveToTop, byId)`: creates and applies a fake event by player(`byId`) to remove all players with ids in `playerIdList` and re-add them in the given order to the (top or bottom)(`moveToTop`) of the player list. `byId` must be `0`.
           - `setPlayerChatIndicator(value, byId)`: sets the chat indicator status of player(`byId`) to `value`.
           - `setPlayerAvatar(value, byId)`: sets the avatar of player(`byId`) to `value`.
           - `setCurrentStadium(value, byId)`: creates and applies a fake event by player(`byId`) to set the current stadium to `stadium`.
-          - `sendAnnouncement(msg, color=-1, style=0, sound=1, targetId, byId)`: send announcement message(`msg`) to player(`targetId`) with properties(`color`, `style`, `sound`). `targetId` is `null` -> send to everyone. `byId` must be `0`.
+          - `sendAnnouncement(msg, color=-1, style=0, sound=1, targetId=null, byId=0)`: send announcement message(`msg`) to player(`targetId`) with properties(`color`, `style`, `sound`). `targetId` is `null` -> send to everyone. `byId` must be `0`.
           - `startGame(byId)`: creates and applies a fake event by player(`byId`) to start the game.
           - `stopGame(byId)`: creates and applies a fake event by player(`byId`) to stop the game.
           - `setGamePaused(value, byId)`: creates and applies a fake event by player(`byId`) to set the game's paused state to `value`.
@@ -504,7 +513,7 @@ Room.create({
     - `setUnlimitedPlayerCount(on)`: adds or removes player limit control. host-only. `on`: `true`/`false`.
     - `setFakePassword(fakePwd)`: sets a fake value for room's password status. host-only. `fakePwd`: `true`/`false` or `null` to disable.
     - `sendChat(msg, targetId)`: send chat message(`msg`) to player(`targetId`). `targetId` is `null` -> send to everyone. `targetId` is host-only.
-    - `sendAnnouncement(msg, targetId, color, style, sound)`: send announcement message(`msg`) to player(`targetId`) with properties(`color`, `style`, `sound`). `targetId` is `null` -> send to everyone. host-only.
+    - `sendAnnouncement(msg, targetId=null, color=-1, style="normal", sound=1)`: send announcement message(`msg`) to player(`targetId`) with properties(`color`, `style`, `sound`). `targetId` is `null` -> send to everyone. host-only.
     - `setDiscProperties(discId, properties)`: set disc(`discId`) `properties`. host-only.
     - `setPlayerDiscProperties(playerId, properties)`: set player(`playerId`)'s disc `properties`. host-only.
     - `reorderPlayers(playerIdList, moveToTop)`: remove all players with ids in `playerIdList` and re-add them in the given order to the (top or bottom)(`moveToTop`) of the player list. host-only.
@@ -512,7 +521,7 @@ Room.create({
     - `sendBinaryCustomEvent(type, data, targetId)`: sends a `BinaryCustomEvent(type, data)` that can only be received by the users of this modified client. if `targetId`(host-only) is specified, the event is only sent to player(`targetId`).
     - `setPlayerIdentity(id, data, targetId)`:  sends a `SetPlayerIdentityEvent(type, data)` to set the identity data(`playerObject.identity`) of player(`id`) to `data`. that can only be received by the users of this modified client. if `targetId`(host-only) is specified, the event is only sent to player(`targetId`).
     - `getKeyState()`: get current key state.
-    - `setKeyState(state)`: set current key state to `state`.
+    - `setKeyState(state, instant=true)`: set current key state to `state`. Sends the event immediately if `instant` is `true`.
     - `startGame()`: start game.
     - `stopGame()`: stop game.
     - `pauseGame()`: toggle pause/resume game.
@@ -542,7 +551,7 @@ Room.create({
     - `removeBan(id)`: removes the ban entry(id). host-only.
     - `setPluginActive(name, active)`: activate/deactivate the plugin(`name`).
     - `startRecording()`: start recording replay data. returns `true` if succeeded, `false` otherwise. recording should not be started before calling this.
-    - `stopRecording()`: stop recording replay data. returns `UIntArray8` data if succeeded, null otherwise. recording should be started before calling this.
+    - `stopRecording()`: stop recording replay data. returns `UintArray8` data if succeeded, null otherwise. recording should be started before calling this.
     - `startStreaming({immediate = true, onClientCount, emitData})`: start streaming the game. currently, recording and streaming cannot be run simultaneously. returns `{onOpen: ()=>void, onDataReceived: (data)=>void, interval: ()=>void}`.
     - `stopStreaming()`: stop streaming the game.
     - `isRecording()`: returns `true` if recording/streaming has started; `false` otherwise.
@@ -670,9 +679,9 @@ Room.create({
       - `customData = onBeforePlayerBallKick(playerId)`: ball was kicked by player(`playerId`). triggered individually.
       - `onPlayerBallKick(playerId, customData)`: ball was kicked by player(`playerId`). triggered individually.
       - `onAfterPlayerBallKick(playerId, customData)`: ball was kicked by player(`playerId`). triggered individually.
-      - `customData = onBeforeTeamGoal(teamId)`: goal was scored by team(`teamId`). triggered individually.
-      - `onTeamGoal(teamId, customData)`: goal was scored by team(`teamId`). triggered individually.
-      - `onAfterTeamGoal(teamId, customData)`: goal was scored by team(`teamId`). triggered individually.
+      - `customData = onBeforeTeamGoal(teamId, goalId, goal, ballDiscId, ballDisc)`: goal was scored by team(`teamId`) to goal(`goal`) with id(`goalId`) using ball(`ballDisc`) with id(`ballDiscId`). triggered individually.
+      - `onTeamGoal(teamId, goalId, goal, ballDiscId, ballDisc, customData)`: goal was scored by team(`teamId`) to goal(`goal`) with id(`goalId`) using ball(`ballDisc`) with id(`ballDiscId`). triggered individually.
+      - `onAfterTeamGoal(teamId, goalId, goal, ballDiscId, ballDisc, customData)`: goal was scored by team(`teamId`) to goal(`goal`) with id(`goalId`) using ball(`ballDisc`) with id(`ballDiscId`). triggered individually.
       - `customData = onBeforeGameEnd(winningTeamId)`: game was won by team(`winningTeamId`). triggered individually.
       - `onGameEnd(winningTeamId, customData)`: game was won by team(`winningTeamId`). triggered individually.
       - `onAfterGameEnd(winningTeamId, customData)`: game was won by team(`winningTeamId`). triggered individually.
@@ -855,7 +864,7 @@ Room.create({
     - `onXXXXXXX(..., customData)`: (where `XXXXXXX` is the name of the event) called after `room.onBeforeXXXXXXX(...)` and before `room.onAfterXXXXXXX(..., customData)`. `customData` is the object that might be returned from `room.onBeforeXXXXXXX(...)`.
       - `onRoomLink(link, customData)`: room link was received. host-only.
       - `onPlayerBallKick(playerId, customData)`: ball was kicked by player(`playerId`). triggered individually.
-      - `onTeamGoal(teamId, customData)`: goal was scored by team(`teamId`). triggered individually.
+      - `onTeamGoal(teamId, goalId, goal, ballDiscId, ballDisc, customData)`: goal was scored by team(`teamId`) to goal(`goal`) with id(`goalId`) using ball(`ballDisc`) with id(`ballDiscId`). triggered individually.
       - `onGameEnd(winningTeamId, customData)`: game was won by team(`winningTeamId`). triggered individually.
       - `onGameTick(customData)`: runs on each game tick. (lots of times per second) triggered individually.
       - `onPlayerSyncChange(playerId, value, customData)`: player(`playerId`)'s synchronized status has changed to (`value`).
@@ -928,7 +937,7 @@ Room.create({
     - `onXXXXXXX(..., customData)`: (where `XXXXXXX` is the name of the event) called after the respective plugin callbacks `plugin.onXXXXXXX(...)` and `room.onXXXXXXX(..., customData)`. `customData` is the object that might be returned from the last call of `plugin.onXXXXXXX(...)` or `room.onXXXXXXX(...)`.
       - `onRoomLink(link, customData)`: room link was received. host-only.
       - `onPlayerBallKick(playerId, customData)`: ball was kicked by player(`playerId`). triggered individually.
-      - `onTeamGoal(teamId, customData)`: goal was scored by team(`teamId`). triggered individually.
+      - `onTeamGoal(teamId, goalId, goal, ballDiscId, ballDisc, customData)`: goal was scored by team(`teamId`) to goal(`goal`) with id(`goalId`) using ball(`ballDisc`) with id(`ballDiscId`). triggered individually.
       - `onGameEnd(winningTeamId, customData)`: game was won by team(`winningTeamId`). triggered individually.
       - `onGameTick(customData)`: runs on each game tick. (lots of times per second) triggered individually.
       - `onPlayerSyncChange(playerId, value, customData)`: player(`playerId`)'s synchronized status has changed to (`value`).
@@ -994,6 +1003,15 @@ Room.create({
     - `Reader`: StreamReader class
     - `Writer`: StreamWriter class
 
+  - `Stadium`: All Stadium-related classes.
+    - `Vertex`: A class that defines a vertex.
+    - `Segment`: A class that defines a segment.
+    - `Plane`: A class that defines a plane.
+    - `Goal`: A class that defines a goal.
+    - `Disc`: A class that defines a disc.
+    - `Joint`: A class that defines a joint.
+    - `Stadium`: A class that defines a stadium.
+
 
 [Back To The Top](#title)
 
@@ -1027,7 +1045,7 @@ Room.create({
 <div> - Initial testing environment by <a href="https://github.com/mertushka">mertushka <img width="20" src="https://avatars1.githubusercontent.com/u/34413473?v=4"/></a></div>
 <div> - %99 of the bot API features by <a href="https://github.com/wxyz-abcd">abc <img width="20" src="https://avatars1.githubusercontent.com/u/8694183?v=4"/></a></div>
 <div> - Headless script example fixed by <a href="https://github.com/iAmLuks">Luks <img width="20" src="https://avatars.githubusercontent.com/u/43921069?v=4"/></a></div>
-<div> - Lots of testing and various plugins by <a href="https://github.com/0x00214131812049">0x00 <img width="20" src="https://avatars.githubusercontent.com/u/96322566?v=4"/></a></div>
+<div> - Lots of testing and various plugins by <a href="https://github.com/mtkcnl">mtkcnl (0x00) <img width="20" src="https://avatars.githubusercontent.com/u/96322566?v=4"/></a></div>
 <div> - Lots of testing and various plugins by <a href="https://github.com/jerryoldson">JerryOldson <img width="20" src="https://avatars.githubusercontent.com/u/140029469?v=4"/></a></div>
 <div> - Lots of testing and Portuguese language translation by <a href="https://github.com/guguxh">Juze <img width="20" src="https://avatars.githubusercontent.com/u/61206153?v=4"/></a></div>
 <div> - Some links fixed by <a href="https://github.com/ChasmSolacer">ChasmSolacer <img width="20" src="https://avatars.githubusercontent.com/u/46286197?v=4"/></a></div>

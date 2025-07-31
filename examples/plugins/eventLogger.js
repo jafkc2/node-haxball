@@ -42,8 +42,8 @@ module.exports = function(API){
     console.log("onPlayerBallKick...", playerId, customData);
   };
 
-  this.onTeamGoal = function(teamId, customData){
-    console.log("onTeamGoal...", teamId, customData);
+  this.onTeamGoal = function(teamId, goalId, goal, ballDiscId, ballDisc, customData){
+    console.log("onTeamGoal...", teamId, goalId, goal, ballDiscId, ballDisc, customData);
   };
 
   this.onGameEnd = function(winningTeamId, customData){

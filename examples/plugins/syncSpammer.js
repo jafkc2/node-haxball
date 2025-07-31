@@ -49,4 +49,27 @@ module.exports = function(API){
     if (timeout!=null)
       clearTimeout(timeout);
   };
+
+  // snapshot support
+
+  this.takeSnapshot = function(){
+    var { spam, intervalMsec } = that;
+    return {
+      spam,
+      intervalMsec,
+      sync
+    };
+  };
+
+  this.useSnapshot = function(snapshot){
+    var {
+      spam,
+      intervalMsec
+    } = snapshot;
+    Object.assign(that, {
+      spam,
+      intervalMsec
+    });
+    sync = snapshot.sync;
+  };
 }

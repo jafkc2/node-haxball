@@ -974,7 +974,7 @@ declare namespace MainReturnType {
     /**
      * The new stadium.
      */
-    public stadium: Stadium;
+    public stadium: Impl.Stadium.Stadium;
   };
 
   /**
@@ -1321,225 +1321,6 @@ declare namespace MainReturnType {
   };
 
   /**
-   * A class that defines a vertex.
-   */
-  declare type Vertex = {
-
-    /**
-     * The id(index) of this Vertex.
-     */
-    id: int;
-    
-    /**
-     * The collision group of this Vertex.
-     */
-    cGroup: int;
-    
-    /**
-     * The collision mask of this Vertex.
-     */
-    cMask: int;
-    
-    /**
-     * The bouncing coefficient of this Vertex.
-     */
-    bCoef: number;
-    
-    /**
-     * The position of this Vertex.
-     */
-    pos: Point;
-  };
-
-  /**
-   * A class that defines a segment.
-   */
-  declare type Segment = {
-
-    /**
-     * The first Vertex of this Segment.
-     */
-    v0: Vertex;
-
-    /**
-     * The second Vertex of this Segment.
-     */
-    v1: Vertex;
-
-    /**
-     * The curving angle of this Segment. (in radians)
-     */
-    curveF: number;
-
-    /**
-     * The color of this Segment. Range: -1 <= `color` < 16777216. 
-     *   - This value can be converted into a rgba string via API's `Utils.numberToColor` function.
-     *   - The special value `-1` means `transparent` color.
-     */
-    color: int;
-
-    /**
-     * Whether this Segment is visible or not.
-     */
-    vis: boolean;
-
-    /**
-     * Bias of this Segment.
-     */
-    bias: number;
-    
-    /**
-     * The bouncing coefficient of this Segment.
-     */
-    bCoef: number;
-    
-    /**
-     * The collision group of this Segment.
-     */
-    cGroup: int;
-    
-    /**
-     * The collision mask of this Segment.
-     */
-    cMask: int;
-
-    /**
-     * The calculated normal vector of this Segment. Only applies to non-curved Segments.
-     */
-    normal: Point;
-
-    /**
-     * The calculated normal direction of the object's tangent line at `v0`. Only applies to curved Segments.
-     */
-    v0Normal: Point;
-
-    /**
-     * The calculated normal direction of the object's tangent line at `v1`. Only applies to curved Segments.
-     */
-    v1Normal: Point;
-    
-    /**
-     * The calculated radius of this Segment. Only applies to curved Segments.
-     */
-    arcRadius: Point;
-
-    /**
-     * The calculated center point of this Segment. Only applies to curved Segments.
-     */
-    arcCenter: Point;
-  };
-
-  /**
-   * A class that defines a plane.
-   */
-  declare type Plane = {
-
-    /**
-     * The normal vector of this Plane.
-     */
-    normal: Point;
-
-    /**
-     * The distance of this Plane to the origin point(0, 0).
-     */
-    dist: number;
-    
-    /**
-     * The bouncing coefficient of this Plane.
-     */
-    bCoef: number;
-    
-    /**
-     * The collision group of this Plane.
-     */
-    cGroup: int;
-    
-    /**
-     * The collision mask of this Plane.
-     */
-    cMask: int;
-  };
-
-  /**
-   * A class that defines a goal.
-   */
-  declare type Goal = {
-
-    /**
-     * The first point of this Goal.
-     */
-    p0: Point;
-
-    /**
-     * The second point of this Goal.
-     */
-    p1: Point;
-
-    /**
-     * The team that this Goal belongs to.
-     */
-    team: Team;
-  };
-
-  /**
-   * A class that defines a disc.
-   */
-  declare type Disc = {
-
-    /**
-     * The position of this Disc.
-     */
-    pos: Point;
-
-    /**
-     * The radius of this Disc.
-     */
-    radius: number;
-
-    /**
-     * The speed of this Disc.
-     */
-    speed: Point;
-
-    /**
-     * The gravity of this Disc.
-     */
-    gravity: Point;
-
-    /**
-     * The damping value of this Disc.
-     */
-    damping: number;
-
-    /**
-     * The 1/mass value of this Disc.
-     */
-    invMass: number;
-    
-    /**
-     * The bouncing coefficient of this Disc.
-     */
-    bCoef: number;
-
-    /**
-     * The color of this Disc. Range: -1 <= `color` < 16777216. 
-     *   - This value can be converted into a rgba string via API's `Utils.numberToColor` function.
-     *   - The special value `-1` means `transparent` color.
-     */
-    color: int;
-    
-    /**
-     * The collision group of this Disc.
-     */
-    cGroup: int;
-    
-    /**
-     * The collision mask of this Disc.
-     */
-    cMask: int;
-  };
-
-  /**
    * A class that defines an active disc.
    */
   declare type MovableDisc = {
@@ -1608,44 +1389,6 @@ declare namespace MainReturnType {
   };
 
   /**
-   * A class that defines a joint.
-   */
-  declare type Joint = {
-
-    /**
-     * Index of the first Disc of this Joint.
-     */
-    d0: int;
-
-    /**
-     * Index of the second Disc of this Joint.
-     */
-    d1: int;
-
-    /**
-     * The minimum length of this Joint.
-     */
-    minLength: number;
-
-    /**
-     * The maximum length of this Joint.
-     */
-    maxLength: number;
-
-    /**
-     * The strength of this Joint. (`Infinity` means rigid.)
-     */
-    strength: number;
-
-    /**
-     * The color of this Joint. Range: -1 <= `color` < 16777216. 
-     *   - This value can be converted into a rgba string via API's `Utils.numberToColor` function.
-     *   - The special value `-1` means `transparent` color.
-     */
-    color: int;
-  };
-
-  /**
    * A class that defines an object to store game-specific physical properties of a player.
    */
   declare type PlayerPhysics = {
@@ -1704,164 +1447,6 @@ declare namespace MainReturnType {
      * The kicking strength of each player.
      */
     kickStrength: number;
-  };
-
-  /**
-   * A class that defines a stadium.
-   */
-  declare type Stadium = {
-
-    /**
-     * All vertices of this Stadium.
-     */
-    vertices: Vertex[];
-
-    /**
-     * All segments of this Stadium.
-     */
-    segments: Segment[];
-
-    /**
-     * All planes of this Stadium.
-     */
-    planes: Plane[];
-
-    /**
-     * All goals of this Stadium.
-     */
-    goals: Goal[];
-
-    /**
-     * All discs of this Stadium.
-     */
-    discs: Disc[];
-
-    /**
-     * All joints of this Stadium.
-     */
-    joints: Joint[];
-
-    /**
-     * All spawn points of this Stadium for the red team.
-     */
-    redSpawnPoints: Point[];
-
-    /**
-     * All spawn points of this Stadium for the blue team.
-     */
-    blueSpawnPoints: Point[];
-
-    /**
-     * The physics properties of all players for this Stadium.
-     */
-    playerPhysics: PlayerPhysics;
-
-    /**
-     * The id(index) of this Stadium in the default stadiums array. 
-     * This value will be 255 in custom Stadiums.
-     */
-    defaultStadiumId: int;
-
-    /**
-     * The maximum view width for this Stadium. Used in Renderers.
-     */
-    maxViewWidth: number;
-
-    /**
-     * Whether the camera will follow the player or not. Used in Renderers.
-     */
-    cameraFollow: CameraFollow;
-
-    /**
-     * Whether this Stadium can be stored or not.
-     */
-    canBeStored: boolean;
-
-    /**
-     * Whether the disc positions other than the ball are reset or not after a goal is scored.
-     */
-    fullKickOffReset: boolean;
-
-    /**
-     * The name of this Stadium.
-     */
-    name: string;
-
-    /**
-     * The width of this Stadium.
-     */
-    width: number;
-
-    /**
-     * The height of this Stadium.
-     */
-    height: number;
-
-    /**
-     * The background type of this Stadium.
-     */
-    bgType: BackgroundType;
-
-    /**
-     * The background color of this Stadium. Range: -1 <= `bgColor` < 16777216. 
-     *   - This value can be converted into a rgba string via API's `Utils.numberToColor` function.
-     *   - The special value `-1` means `transparent` color.
-     */
-    bgColor: int;
-
-    /**
-     * The width for the background of this Stadium.
-     */
-    bgWidth: number;
-
-    /**
-     * The height for the background of this Stadium.
-     */
-    bgHeight: number;
-
-    /**
-     * The kick-off circle's radius for the background of this Stadium.
-     */
-    bgKickOffRadius: number;
-
-    /**
-     * The radius of the corners for the background of this Stadium.
-     */
-    bgCornerRadius: number;
-
-    /**
-     * The spawn distance of players for this Stadium.
-     */
-    spawnDistance: number;
-
-    /**
-     * The goal line's horizontal distance from the default goal positions for the background of this Stadium.
-     */
-    bgGoalLine: number;
-
-    /**
-     * Whether this is a custom Stadium or a default Stadium.
-     */
-    readonly isCustom: boolean;
-
-    /**
-     * Creates a copy of this Stadium object.
-     */
-    copy: ()=>Stadium;
-  
-    /**
-     * Returns the checksum for this Stadium object.
-     * 
-     * @returns The checksum string of this Stadium object, or `null` for default stadiums.
-     */
-    calculateChecksum: ()=>string|null;
-
-    /**
-     * Returns the hash value for this Stadium object.
-     * 
-     * @returns The hash value for this Stadium object.
-     */
-    calculateHash: ()=>int;
   };
 
   /**
@@ -2095,17 +1680,17 @@ declare namespace MainReturnType {
     /**
      * All vertices of this World.
      */
-    vertices: Vertex[];
+    vertices: Impl.Stadium.Vertex[];
 
     /**
      * All segments of this World.
      */
-    segments: Segment[];
+    segments: Impl.Stadium.Segment[];
 
     /**
      * All planes of this World.
      */
-    planes: Plane[];
+    planes: Impl.Stadium.Plane[];
 
     /**
      * All movable discs of this World.
@@ -2115,7 +1700,7 @@ declare namespace MainReturnType {
     /**
      * All joints of this World.
      */
-    joints: Joint[];
+    joints: Impl.Stadium.Joint[];
 
     /**
      * The extrapolated version of this World, or `null` if the data is not available.
@@ -2189,7 +1774,7 @@ declare namespace MainReturnType {
     /**
      * The stadium that the game is currently being played in.
      */
-    stadium: Stadium;
+    stadium: Impl.Stadium.Stadium;
 
     /**
      * The team that conceded the last goal.
@@ -2226,7 +1811,7 @@ declare namespace MainReturnType {
     /**
      * The stadium that the game is currently being played in.
      */
-    stadium: Stadium;
+    stadium: Impl.Stadium.Stadium;
 
     /**
      * The min value of kick rate limit.
@@ -2580,11 +2165,15 @@ declare namespace MainReturnType {
      * Called just after a goal has been scored.
      * 
      * @param teamId Id of the team that scored the goal.
+     * @param goalId Id of the goal object that the ball went in.
+     * @param goal The goal object that the ball went in.
+     * @param ballDiscId Id of the ball disc that caused the goal.
+     * @param ballDisc The ball disc that caused the goal.
      * @param customData the custom data that was returned from the previous callback.
      * 
      * @returns void or a custom data to pass to the next callback.
      */
-    onTeamGoal?: (teamId: int, customData?: any)=>any,
+    onTeamGoal?: (teamId: int, goalId: int, goal: Impl.Stadium.Goal, ballDiscId: int, ballDisc: Impl.Stadium.Disc, customData?: any)=>any,
 
     /**
      * Called just after the game has ended.
@@ -2868,7 +2457,7 @@ declare namespace MainReturnType {
      * 
      * @returns void or a custom data to pass to the next callback.
      */
-    onStadiumChange?: (stadium: Stadium, byId: uint16, customData?: any)=>any,
+    onStadiumChange?: (stadium: Impl.Stadium.Stadium, byId: uint16, customData?: any)=>any,
 
     /**
      * Called just after the room's teams have been locked/unlocked.
@@ -3119,6 +2708,18 @@ declare namespace MainReturnType {
      * @returns void or a custom data to pass to the next callback.
      */
     onIdentityEvent?: (id: uint16, data: object, byId: uint16, customData?: any)=>any
+  }
+
+  declare interface SandboxOnlyCallbacks {
+
+    /**
+     * This is a special callback for the sandbox to be able to filter some events. This callback is called for every single event that occurs in the sandbox, and the events that return `false` from this callback are not executed.
+     * 
+     * @param event The event that has just occurred.
+     * 
+     * @returns A boolean that represents whether this event will be executed or not.
+     */
+    filterEvents?: (event: HaxballEvent)=>boolean
   }
 
   declare interface HostOnlyRoomConfigCallbacks {
@@ -3455,20 +3056,28 @@ declare namespace MainReturnType {
      * Called just after a goal has been scored.
      * 
      * @param teamId Id of the team that scored the goal.
+     * @param goalId Id of the goal object that the ball went in.
+     * @param goal The goal object that the ball went in.
+     * @param ballDiscId Id of the ball disc that caused the goal.
+     * @param ballDisc The ball disc that caused the goal.
      * 
      * @returns void or a custom data to pass to the next callback.
      */
-    onBeforeTeamGoal?: (teamId: int)=>any,
+    onBeforeTeamGoal?: (teamId: int, goalId: int, goal: Impl.Stadium.Goal, ballDiscId: int, ballDisc: Impl.Stadium.Disc)=>any,
 
     /**
      * Called just after a goal has been scored.
      * 
      * @param teamId Id of the team that scored the goal.
+     * @param goalId Id of the goal object that the ball went in.
+     * @param goal The goal object that the ball went in.
+     * @param ballDiscId Id of the ball disc that caused the goal.
+     * @param ballDisc The ball disc that caused the goal.
      * @param customData the custom data that was returned from the previous callback.
      * 
      * @returns void.
      */
-    onAfterTeamGoal?: (teamId: int, customData?: any)=>void,
+    onAfterTeamGoal?: (teamId: int, goalId: int, goal: Impl.Stadium.Goal, ballDiscId: int, ballDisc: Impl.Stadium.Disc, customData?: any)=>void,
 
     /**
      * Called just after the game has ended.
@@ -3989,7 +3598,7 @@ declare namespace MainReturnType {
      * 
      * @returns void or a custom data to pass to the next callback.
      */
-    onBeforeStadiumChange?: (stadium: Stadium, byId: uint16)=>any,
+    onBeforeStadiumChange?: (stadium: Impl.Stadium.Stadium, byId: uint16)=>any,
 
     /**
      * Called just after the room's current stadium has been changed.
@@ -4000,7 +3609,7 @@ declare namespace MainReturnType {
      * 
      * @returns void.
      */
-    onAfterStadiumChange?: (stadium: Stadium, byId: uint16, customData?: any)=>void,
+    onAfterStadiumChange?: (stadium: Impl.Stadium.Stadium, byId: uint16, customData?: any)=>void,
 
     /**
      * Called just after the room's teams have been locked/unlocked.
@@ -4742,21 +4351,21 @@ declare namespace MainReturnType {
      * 
      * @returns The generated `Stadium` object, or `undefined` if an error occurs.
      */
-    export function parseStadium(textDataFromHbsFile: string): Stadium|undefined;
+    export function parseStadium(textDataFromHbsFile: string): Impl.Stadium.Stadium|undefined;
 
     /**
      * Generate and return text content from a `stadium` object that can be directly written in a .hbs file.
      * 
      * @returns The string(.hbs) representation of the stadium object.
      */
-    export function exportStadium(stadium: Stadium): string;
+    export function exportStadium(stadium: Impl.Stadium.Stadium): string;
 
     /**
      * Returns the default stadium array.
      * 
      * @returns All of the default stadiums as an array.
      */
-    export function getDefaultStadiums(): Stadium[];
+    export function getDefaultStadiums(): Impl.Stadium.Stadium[];
 
     /**
      * Returns a new promise that executes the given `promise` until `msec` milliseconds have passed. If timeout is reached, the promise is rejected.
@@ -5159,6 +4768,34 @@ declare namespace MainReturnType {
   declare interface SandboxRoom extends SandboxRoomBase {
 
     /**
+     * Initializes the sandbox. (Should only be called if `delayedInit` is `true`.)
+     * 
+     * @returns void.
+     */
+    initialize(): void;
+
+    /**
+     * Start recording replay. Recording should be stopped before calling this.
+     * 
+     * @returns `true` if succeeded, `false` otherwise.
+     */
+    startRecording(): boolean;
+
+    /**
+     * Stop recording replay. Recording should be started before calling this.
+     * 
+     * @returns The recorded replay data if succeeded, `null` otherwise.
+     */
+    stopRecording(): Uint8Array | null;
+
+    /**
+     * Returns whether the replay recorder is active or not.
+     * 
+     * @returns `true` if replay recording is active; `false` otherwise.
+     */
+    isRecording(): boolean;
+
+    /**
      * Applies an event to the current room state. For example; the event object may come from a `ReplayData` structure, 
      * or from a `onOperationReceived(type, msg, globalFrameNo, clientFrameNo, customData)` callback.
      * 
@@ -5221,6 +4858,17 @@ declare namespace MainReturnType {
     setKeyState(state: int): void;
 
     /**
+     * Creates and applies a fake event by player(`byId`) to remove all of the players whose ids exist in the array `playerIdList`, and add them back in the given order to the top or bottom of the player list depending on the `moveToTop` value.
+     * 
+     * @param playerIdList The ids of players that are desired to be removed from the room's players list, reordered to match the order in idList and added back to the room's players list.
+     * @param moveToTop Whether to add the players to the top or bottom of the room's players list.
+     * @param byId This value must always be 0.
+     * 
+     * @returns void.
+     */
+    reorderPlayers(playerIdList: uint16[], moveToTop: boolean, byId: uint16): void;
+
+    /**
      * Sets the chat indicator status of a player.
      * 
      * @param value The desired chat indicator status.
@@ -5248,7 +4896,7 @@ declare namespace MainReturnType {
      * 
      * @returns void.
      */
-    setCurrentStadium(value: Stadium, byId: uint16): void;
+    setCurrentStadium(value: Impl.Stadium.Stadium, byId: uint16): void;
 
     /**
      * Sends an announcement message to a player.
@@ -5704,12 +5352,12 @@ declare namespace MainReturnType {
     /**
      * First vertex of the new segment.
      */
-    v0: Vertex,
+    v0: Impl.Stadium.Vertex,
 
     /**
      * Second vertex of the new segment.
      */
-    v1: Vertex,
+    v1: Impl.Stadium.Vertex,
 
     /**
      * Color of the new segment.
@@ -5884,12 +5532,12 @@ declare namespace MainReturnType {
     /**
      * The first disc of the new joint.
      */
-    d0: Disc,
+    d0: Impl.Stadium.Disc,
 
     /**
      * The second disc of the new joint.
      */
-    d1: Disc,
+    d1: Impl.Stadium.Disc,
 
     /**
      * The color of the new joint.
@@ -6713,7 +6361,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Vertex object.
      */
-    createVertex(data: CreateVertexParams): Vertex;
+    createVertex(data: CreateVertexParams): Impl.Stadium.Vertex;
 
     /**
      * Creates a segment object in memory using vertex indices and returns it. The vertices must exist at the given indices in the `vertices` array of the current room.
@@ -6732,7 +6380,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Segment object.
      */
-    createSegment(data: CreateSegmentParams): Segment;
+    createSegment(data: CreateSegmentParams): Impl.Stadium.Segment;
 
     /**
      * Creates a segment object in memory using vertex objects and returns it. 
@@ -6751,7 +6399,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Segment object.
      */
-    createSegmentFromObj(data: CreateSegmentFromObjParams): Segment;
+    createSegmentFromObj(data: CreateSegmentFromObjParams): Impl.Stadium.Segment;
 
     /**
      * Creates a goal object in memory and returns it.
@@ -6763,7 +6411,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Goal object.
      */
-    createGoal(data: CreateGoalParams): Goal;
+    createGoal(data: CreateGoalParams): Impl.Stadium.Goal;
     
     /**
      * Creates a plane object in memory and returns it.
@@ -6777,7 +6425,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Plane object.
      */
-    createPlane(data: CreatePlaneParams): Plane;
+    createPlane(data: CreatePlaneParams): Impl.Stadium.Plane;
 
     /**
      * Creates a disc object in memory and returns it.
@@ -6796,7 +6444,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Disc object.
      */
-    createDisc(data: CreateDiscParams): Disc;
+    createDisc(data: CreateDiscParams): Impl.Stadium.Disc;
 
     /**
      * Creates a joint object in memory using disc indices and returns it.
@@ -6810,7 +6458,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Joint object.
      */
-    createJoint(data: CreateJointParams): Joint;
+    createJoint(data: CreateJointParams): Impl.Stadium.Joint;
 
     /**
      * Creates a joint object in memory using disc objects and returns it.
@@ -6824,7 +6472,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Joint object.
      */
-    createJointFromObj(data: CreateJointFromObjParams): Joint;
+    createJointFromObj(data: CreateJointFromObjParams): Impl.Stadium.Joint;
 
     /**
      * Creates a vertex object and adds it to the current stadium.
@@ -6960,7 +6608,7 @@ declare namespace MainReturnType {
      * 
      * @returns An array in this format: `[index1: int, index2: int]`. `index1` and `index2` are the indices of the 1st and 2nd vertices of the queried segment.
      */
-    findVertexIndicesOfSegmentObj(obj: Segment): int[];
+    findVertexIndicesOfSegmentObj(obj: Impl.Stadium.Segment): int[];
 
     /**
      * Returns the indices of vertices that form a segment. 
@@ -7072,7 +6720,7 @@ declare namespace MainReturnType {
      * 
      * @returns void.
      */
-    updateDiscObj(discObj: Disc, data: UpdateDiscObjParams): void;
+    updateDiscObj(discObj: Impl.Stadium.Disc, data: UpdateDiscObjParams): void;
 
     /**
      * Updates the `idx`th joint's only the given values.
@@ -7350,7 +6998,7 @@ declare namespace MainReturnType {
      * @param value The new stadium of the current room.
      * @param byId Id of the player who will look like he/she sent this event.
      */
-    fakeSetStadium(value: Stadium, byId: uint16): void;
+    fakeSetStadium(value: Impl.Stadium.Stadium, byId: uint16): void;
 
     /**
      * Triggers a fake game start event that apparently originated from the player whose id is `byId`.
@@ -7614,7 +7262,7 @@ declare namespace MainReturnType {
     /**
      * The stadium object of the room. read-only.
      */
-    readonly stadium: Stadium;
+    readonly stadium: Impl.Stadium.Stadium;
 
     /**
      * The list of players in the room. read-only.
@@ -7884,12 +7532,12 @@ declare namespace MainReturnType {
      *   - The color value can be converted into a rgba string via API's `Utils.numberToColor` function.
      *   - The special value `-1` means transparent.
      * @param style The desired font style of the announcement. Must be one of the following:
-     *   - `0`: use document's default font style.
-     *   - `1`: fontWeight = "bold".
-     *   - `2`: fontStyle = "italic".
-     *   - `3`: fontSize = "12px".
-     *   - `4`: fontWeight = "bold", fontSize = "12px".
-     *   - `5`: fontWeight = "italic", fontSize = "12px".
+     *   - `normal`: use document's default font style.
+     *   - `bold`: fontWeight = "bold".
+     *   - `italic`: fontStyle = "italic".
+     *   - `small`: fontSize = "12px".
+     *   - `small-bold`: fontWeight = "bold", fontSize = "12px".
+     *   - `small-italic`: fontWeight = "italic", fontSize = "12px".
      * @param sound The desired sound of the announcement. Must be one of the following:
      *   - `0`: no sound.
      *   - `1`: chat sound.
@@ -7897,7 +7545,7 @@ declare namespace MainReturnType {
      * 
      * @returns void.
      */
-    sendAnnouncement(msg: string, targetId: uint16 | null, color: int, style: int, sound: int): void;
+    sendAnnouncement(msg: string, targetId: uint16 | null = null, color: int = -1, style: string = "normal", sound: int = 1): void;
 
     /**
      * Sets the properties of a disc. host-only.
@@ -7999,10 +7647,11 @@ declare namespace MainReturnType {
      * Sets the current player's key state value.
      * 
      * @param state The desired key state value. `0` <= `state` <= `31`.
+     * @param instant If `true`, sends the event immediately. This is introduced later to reduce input lag.
      * 
      * @returns void.
      */
-    setKeyState(state: int): void;
+    setKeyState(state: int, instant: boolean = true): void;
 
     /**
      * Starts the game. admin-only.
@@ -8085,7 +7734,7 @@ declare namespace MainReturnType {
      * 
      * @returns void.
      */
-    setCurrentStadium(stadium: Stadium): void;
+    setCurrentStadium(stadium: Impl.Stadium.Stadium): void;
 
     /**
      * Sets the time limit of the room. The game must be stopped first. admin-only.
@@ -8163,7 +7812,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Disc object.
      */
-    getBall(extrapolated?: boolean): Disc;
+    getBall(extrapolated?: boolean): Impl.Stadium.Disc;
 
     /**
      * Returns the disc array of the current room.
@@ -8174,7 +7823,7 @@ declare namespace MainReturnType {
      * 
      * @returns An array that consists of Disc objects.
      */
-    getDiscs(extrapolated?: boolean): Disc[];
+    getDiscs(extrapolated?: boolean): Impl.Stadium.Disc[];
 
     /**
      * Returns the disc whose id is `discId`.
@@ -8186,7 +7835,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Disc object.
      */
-    getDisc(discId: int, extrapolated?: boolean): Disc;
+    getDisc(discId: int, extrapolated?: boolean): Impl.Stadium.Disc;
 
     /**
      * Returns the disc that belongs to the player whose id is `playerId`.
@@ -8198,7 +7847,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Disc object.
      */
-    getPlayerDisc(playerId: uint16, extrapolated?: boolean): Disc;
+    getPlayerDisc(playerId: uint16, extrapolated?: boolean): Impl.Stadium.Disc;
 
     /**
      * Returns the disc that belongs to the player whose id is `playerId`. Faster than `getPlayerDisc`, but experimental. Use at your own risk.
@@ -8207,7 +7856,7 @@ declare namespace MainReturnType {
      * 
      * @returns A Disc object.
      */
-    getPlayerDisc_exp(playerId: uint16): Disc;
+    getPlayerDisc_exp(playerId: uint16): Impl.Stadium.Disc;
 
     /**
      * Activate or deactivate the plugin whose name is `name`.
@@ -8414,12 +8063,13 @@ declare namespace MainReturnType {
      * @param callbacks An object that may have all callbacks defined in sections `2`, `3.1`, `4` and `6` of our event callbacks documentation. In addition, it is possible to use a render callback that has the same signature as defined in section `3` of our `Renderer` documentation.
      * @param options An object that might have the following keys:
      *   - `controlledPlayerId: int | null`: Id of the player to be controlled.
+     *   - `delayedInit: boolean`: Whether to delay the initialization of the sandbox. (You have to manually initialize it later using its `initialize()` function.)
      *   - `requestAnimationFrame: ((callback: function, ...args: any[])=>number) | null`: Override function for `requestAnimationFrame`. Omit to use library's default `requestAnimationFrame`.
      *   - `cancelAnimationFrame: ((handle: number)=>void) | null`: Override function for `cancelAnimationFrame`. Omit to use library's default `cancelAnimationFrame`.
      * 
      * @returns An instance of the SandboxRoom structure.
      */
-    static sandbox(callbacks: CommonlyUsedCallbacks & CustomCallbacks, options: SandboxOptions): SandboxRoom;
+    static sandbox(callbacks: CommonlyUsedCallbacks & CustomCallbacks & SandboxOnlyCallbacks, options: SandboxOptions): SandboxRoom;
 
     /**
      * Creates a stream watcher room object.
@@ -8629,7 +8279,7 @@ declare namespace MainReturnType {
      * 
      * @returns An instance of SetStadiumEvent.
      */
-    export function setStadium(stadium: Stadium): SetStadiumEvent;
+    export function setStadium(stadium: Impl.Stadium.Stadium): SetStadiumEvent;
 
     /**
      * Creates a SetPlayerTeamEvent object that can be used to trigger a setPlayerTeam event.
@@ -9072,7 +8722,7 @@ declare namespace MainReturnType {
      * 
      * @returns The found Vertex, or `undefined` if it is not found.
      */
-    export function getVertexAtMapCoord(roomState: RoomState, p: Point, threshold: number): Vertex | null;
+    export function getVertexAtMapCoord(roomState: RoomState, p: Point, threshold: number): Impl.Stadium.Vertex | null;
 
     /**
      * Finds the index of the first Segment that is near enough to any given point.
@@ -9104,7 +8754,7 @@ declare namespace MainReturnType {
      * 
      * @returns The found Segment, or `-1` if it is not found.
      */
-    export function getSegmentAtMapCoord(roomState: RoomState, p: Point, threshold: number): Segment | null;
+    export function getSegmentAtMapCoord(roomState: RoomState, p: Point, threshold: number): Impl.Stadium.Segment | null;
 
     /**
      * Finds the first Goal that is near enough to any given point.
@@ -9136,7 +8786,7 @@ declare namespace MainReturnType {
      * 
      * @returns The found Goal, or `undefined` if it is not found.
      */
-    export function getGoalAtMapCoord(roomState: RoomState, p: Point, threshold: number): Goal | null;
+    export function getGoalAtMapCoord(roomState: RoomState, p: Point, threshold: number): Impl.Stadium.Goal | null;
 
     /**
      * Finds the first Plane that is near enough to any given point.
@@ -9168,7 +8818,7 @@ declare namespace MainReturnType {
      * 
      * @returns The found Plane, or `undefined` if it is not found.
      */
-    export function getPlaneAtMapCoord(roomState: RoomState, p: Point, threshold: number): Plane | null;
+    export function getPlaneAtMapCoord(roomState: RoomState, p: Point, threshold: number): Impl.Stadium.Plane | null;
 
     /**
      * Finds the first Joint that is near enough to any given point.
@@ -9200,7 +8850,7 @@ declare namespace MainReturnType {
      * 
      * @returns The found Joint, or `undefined` if it is not found.
      */
-    export function getJointAtMapCoord(roomState: RoomState, p: Point, threshold: number): Joint | null;
+    export function getJointAtMapCoord(roomState: RoomState, p: Point, threshold: number): Impl.Stadium.Joint | null;
 
     /**
      * Finds the index of the first Disc that includes any given point.
@@ -9230,7 +8880,7 @@ declare namespace MainReturnType {
      * 
      * @returns The found Disc, or `undefined` if it is not found.
      */
-    export function getDiscAtMapCoord(roomState: RoomState, p: Point): Disc | null;
+    export function getDiscAtMapCoord(roomState: RoomState, p: Point): Impl.Stadium.Disc | null;
 
     /**
      * Finds the first spawn point that is near enough to any given point.
@@ -9931,6 +9581,433 @@ declare namespace MainReturnType {
          */
         color: int;
       }
+    }
+
+    /**
+     * All Stadium-related classes.
+     */
+    export interface Stadium {}
+    export namespace Stadium {
+
+      /**
+       * A class that defines a vertex.
+       */
+      export class Vertex {
+
+        /**
+         * The id(index) of this Vertex.
+         */
+        public id: int;
+        
+        /**
+         * The collision group of this Vertex.
+         */
+        public cGroup: int;
+        
+        /**
+         * The collision mask of this Vertex.
+         */
+        public cMask: int;
+        
+        /**
+         * The bouncing coefficient of this Vertex.
+         */
+        public bCoef: number;
+        
+        /**
+         * The position of this Vertex.
+         */
+        public pos: Point;
+      };
+
+      /**
+       * A class that defines a segment.
+       */
+      export class Segment {
+
+        /**
+         * The first Vertex of this Segment.
+         */
+        public v0: Vertex;
+
+        /**
+         * The second Vertex of this Segment.
+         */
+        public v1: Vertex;
+
+        /**
+         * The curving angle of this Segment. (in radians)
+         */
+        public curveF: number;
+
+        /**
+         * The color of this Segment. Range: -1 <= `color` < 16777216. 
+         *   - This value can be converted into a rgba string via API's `Utils.numberToColor` function.
+         *   - The special value `-1` means `transparent` color.
+         */
+        public color: int;
+
+        /**
+         * Whether this Segment is visible or not.
+         */
+        public vis: boolean;
+
+        /**
+         * Bias of this Segment.
+         */
+        public bias: number;
+        
+        /**
+         * The bouncing coefficient of this Segment.
+         */
+        public bCoef: number;
+        
+        /**
+         * The collision group of this Segment.
+         */
+        public cGroup: int;
+        
+        /**
+         * The collision mask of this Segment.
+         */
+        public cMask: int;
+
+        /**
+         * The calculated normal vector of this Segment. Only applies to non-curved Segments.
+         */
+        public normal: Point;
+
+        /**
+         * The calculated normal direction of the object's tangent line at `v0`. Only applies to curved Segments.
+         */
+        public v0Normal: Point;
+
+        /**
+         * The calculated normal direction of the object's tangent line at `v1`. Only applies to curved Segments.
+         */
+        public v1Normal: Point;
+        
+        /**
+         * The calculated radius of this Segment. Only applies to curved Segments.
+         */
+        public arcRadius: Point;
+
+        /**
+         * The calculated center point of this Segment. Only applies to curved Segments.
+         */
+        public arcCenter: Point;
+      };
+
+      /**
+       * A class that defines a plane.
+       */
+      export class Plane {
+
+        /**
+         * The normal vector of this Plane.
+         */
+        public normal: Point;
+
+        /**
+         * The distance of this Plane to the origin point(0, 0).
+         */
+        public dist: number;
+        
+        /**
+         * The bouncing coefficient of this Plane.
+         */
+        public bCoef: number;
+        
+        /**
+         * The collision group of this Plane.
+         */
+        public cGroup: int;
+        
+        /**
+         * The collision mask of this Plane.
+         */
+        public cMask: int;
+      };
+
+      /**
+       * A class that defines a goal.
+       */
+      export class Goal {
+
+        /**
+         * The first point of this Goal.
+         */
+        public p0: Point;
+
+        /**
+         * The second point of this Goal.
+         */
+        public p1: Point;
+
+        /**
+         * The team that this Goal belongs to.
+         */
+        public team: Team;
+
+        /**
+         * Checks whether the line segment that passes through p1 and p2 intersects with the goal line.
+         */
+        public check: (p1: Point, p2: Point)=>boolean;
+      };
+
+      /**
+       * A class that defines a disc.
+       */
+      export class Disc {
+
+        /**
+         * The position of this Disc.
+         */
+        public pos: Point;
+
+        /**
+         * The radius of this Disc.
+         */
+        public radius: number;
+
+        /**
+         * The speed of this Disc.
+         */
+        public speed: Point;
+
+        /**
+         * The gravity of this Disc.
+         */
+        public gravity: Point;
+
+        /**
+         * The damping value of this Disc.
+         */
+        public damping: number;
+
+        /**
+         * The 1/mass value of this Disc.
+         */
+        public invMass: number;
+        
+        /**
+         * The bouncing coefficient of this Disc.
+         */
+        public bCoef: number;
+
+        /**
+         * The color of this Disc. Range: -1 <= `color` < 16777216. 
+         *   - This value can be converted into a rgba string via API's `Utils.numberToColor` function.
+         *   - The special value `-1` means `transparent` color.
+         */
+        public color: int;
+        
+        /**
+         * The collision group of this Disc.
+         */
+        public cGroup: int;
+        
+        /**
+         * The collision mask of this Disc.
+         */
+        public cMask: int;
+      };
+
+      /**
+       * A class that defines a joint.
+       */
+      export class Joint {
+
+        /**
+         * Index of the first Disc of this Joint.
+         */
+        public d0: int;
+
+        /**
+         * Index of the second Disc of this Joint.
+         */
+        public d1: int;
+
+        /**
+         * The minimum length of this Joint.
+         */
+        public minLength: number;
+
+        /**
+         * The maximum length of this Joint.
+         */
+        public maxLength: number;
+
+        /**
+         * The strength of this Joint. (`Infinity` means rigid.)
+         */
+        public strength: number;
+
+        /**
+         * The color of this Joint. Range: -1 <= `color` < 16777216. 
+         *   - This value can be converted into a rgba string via API's `Utils.numberToColor` function.
+         *   - The special value `-1` means `transparent` color.
+         */
+        public color: int;
+      };
+
+      /**
+       * A class that defines a stadium.
+       */
+      export class Stadium {
+
+        /**
+         * All vertices of this Stadium.
+         */
+        public vertices: Vertex[];
+
+        /**
+         * All segments of this Stadium.
+         */
+        public segments: Segment[];
+
+        /**
+         * All planes of this Stadium.
+         */
+        public planes: Plane[];
+
+        /**
+         * All goals of this Stadium.
+         */
+        public goals: Goal[];
+
+        /**
+         * All discs of this Stadium.
+         */
+        public discs: Disc[];
+
+        /**
+         * All joints of this Stadium.
+         */
+        public joints: Joint[];
+
+        /**
+         * All spawn points of this Stadium for the red team.
+         */
+        public redSpawnPoints: Point[];
+
+        /**
+         * All spawn points of this Stadium for the blue team.
+         */
+        public blueSpawnPoints: Point[];
+
+        /**
+         * The physics properties of all players for this Stadium.
+         */
+        public playerPhysics: PlayerPhysics;
+
+        /**
+         * The id(index) of this Stadium in the default stadiums array. 
+         * This value will be 255 in custom Stadiums.
+         */
+        public defaultStadiumId: int;
+
+        /**
+         * The maximum view width for this Stadium. Used in Renderers.
+         */
+        public maxViewWidth: number;
+
+        /**
+         * Whether the camera will follow the player or not. Used in Renderers.
+         */
+        public cameraFollow: CameraFollow;
+
+        /**
+         * Whether this Stadium can be stored or not.
+         */
+        public canBeStored: boolean;
+
+        /**
+         * Whether the disc positions other than the ball are reset or not after a goal is scored.
+         */
+        public fullKickOffReset: boolean;
+
+        /**
+         * The name of this Stadium.
+         */
+        public name: string;
+
+        /**
+         * The width of this Stadium.
+         */
+        public width: number;
+
+        /**
+         * The height of this Stadium.
+         */
+        public height: number;
+
+        /**
+         * The background type of this Stadium.
+         */
+        public bgType: BackgroundType;
+
+        /**
+         * The background color of this Stadium. Range: -1 <= `bgColor` < 16777216. 
+         *   - This value can be converted into a rgba string via API's `Utils.numberToColor` function.
+         *   - The special value `-1` means `transparent` color.
+         */
+        public bgColor: int;
+
+        /**
+         * The width for the background of this Stadium.
+         */
+        public bgWidth: number;
+
+        /**
+         * The height for the background of this Stadium.
+         */
+        public bgHeight: number;
+
+        /**
+         * The kick-off circle's radius for the background of this Stadium.
+         */
+        public bgKickOffRadius: number;
+
+        /**
+         * The radius of the corners for the background of this Stadium.
+         */
+        public bgCornerRadius: number;
+
+        /**
+         * The spawn distance of players for this Stadium.
+         */
+        public spawnDistance: number;
+
+        /**
+         * The goal line's horizontal distance from the default goal positions for the background of this Stadium.
+         */
+        public bgGoalLine: number;
+
+        /**
+         * Whether this is a custom Stadium or a default Stadium.
+         */
+        public readonly isCustom: boolean;
+
+        /**
+         * Creates a copy of this Stadium object.
+         */
+        public copy: ()=>Stadium;
+      
+        /**
+         * Returns the checksum for this Stadium object.
+         * 
+         * @returns The checksum string of this Stadium object, or `null` for default stadiums.
+         */
+        public calculateChecksum: ()=>string|null;
+
+        /**
+         * Returns the hash value for this Stadium object.
+         * 
+         * @returns The hash value for this Stadium object.
+         */
+        public calculateHash: ()=>int;
+      };
     }
 
     /**

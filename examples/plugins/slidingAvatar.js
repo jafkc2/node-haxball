@@ -63,4 +63,26 @@ module.exports = function (API) {
     }
   };
 
+  // snapshot support
+
+  this.takeSnapshot = function(){
+    var { avatar, slideInterval } = that;
+    return {
+      avatar,
+      slideInterval,
+      avatarIndex
+    };
+  };
+
+  this.useSnapshot = function(snapshot){
+    var {
+      avatar,
+      slideInterval
+    } = snapshot;
+    Object.assign(that, {
+      avatar,
+      slideInterval
+    });
+    avatarIndex = snapshot.avatarIndex;
+  };
 }
