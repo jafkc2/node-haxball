@@ -42,13 +42,8 @@ module.exports = function (API) {
     //     "DPAD-DOWN",
     //     "DPAD-LEFT",
     //     "DPAD-RIGHT",
-    // ];
-    // const html_content = `
-    //     <html>
 
-    //     </html>
-    // `
-
+    let animationFrameId = null;
     /**
      * @param {GamepadEvent} event
      */
@@ -81,65 +76,69 @@ module.exports = function (API) {
         if (gamepads.length) gamepad ??= gamepads.find(v => v !== null)
 
             console.log(gamepads);
+        animationFrameId = requestAnimationFrame(pollGamepad.bind(this));
+
     };
     this.finalize = function () {
         window.ongamepadconnected = null;
         window.ongamepaddisconnected = null;
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
     };
 
-    this.onGameTick = () => {
-        /*
-         *           0: A (X)
-         *           1: B (Circle)
-         *           2: X (square)
-         *           3: Y (Triangle)
-         *           4: LB (L1)
-         *           5: RB (R1)
-         *           6: LT (L2)
-         *           7: RT (R2)
-         *           8: BACK (SELECT)
-         *           9 : START (Options)
-         *           10:Left Stick
-         *           11: Right Stick
-         *           12: DPAD-UP
-         *           13: DPAD-DOWN
-         *           14: DPAD-LEFT
-         *           15: DPAD-RIGHT
-         */
-        if (gamepad) {
-            // Why the fuck we don't have callback for pressed buttons?
-            gamepad = navigator.getGamepads()[gamepad?.index];
-            if (!gamepad) return;
-            const btns = gamepad.buttons;
-            const axes = gamepad.axes;
-            const DEADZONE = 0.25;
-
-            let dirX = btns[14].pressed ? -1 : btns[15].pressed ? 1 : 0,
-            dirY = btns[12].pressed ? -1 : btns[13].pressed ? 1 : 0
-
-            if (dirX === 0 && Math.abs(axes[0]) > DEADZONE) {
-                dirX = axes[0] > 0 ? 1 : -1;
+        this.onPlayerBallKick = (playerId, data) => {
+            console.log(this.vibrateOnBallKickl)
+            if (this.vibrateOnBallKick && gamepad && playerId == this.room.currentPlayerId) {
+                gamepad.vibrationActuator.playEffect("dual-rumble", { duration: 150, strongMagnitude: 0.6 })
             }
+        };
 
-            if (dirY === 0 && Math.abs(axes[1]) > DEADZONE) {
-                dirY = axes[1] > 0 ? 1 : -1;
+        this.onTeamGoal = (teamId, data) => {
+            if (this.vibrateOnGoal && gamepad) {
+                gamepad.vibrationActuator.playEffect("dual-rumble", { duration: 800, strongMagnitude: 1 })
             }
-            const kick = btns[0].pressed;
-            this.room.setKeyState(Utils.keyState(dirX, dirY, kick));
         }
 
-    }
+        function pollGamepad() {
+            if (gamepad) {
+                gamepad = navigator.getGamepads()[gamepad?.index];
+                if (!gamepad) return;
+                const btns = gamepad.buttons;
+                const axes = gamepad.axes;
+                const DEADZONE = 0.15;
 
-    this.onPlayerBallKick = (playerId, data) => {
-        console.log(this.vibrateOnBallKickl)
-        if (this.vibrateOnBallKick && gamepad && playerId == this.room.currentPlayerId) {
-            gamepad.vibrationActuator.playEffect("dual-rumble", { duration: 150, strongMagnitude: 0.6 })
-        }
-    };
+                let dirX = btns[14].pressed ? -1 : btns[15].pressed ? 1 : 0,
+                dirY = btns[12].pressed ? -1 : btns[13].pressed ? 1 : 0
 
-    this.onTeamGoal = (teamId, data) => {
-        if (this.vibrateOnGoal && gamepad) {
-            gamepad.vibrationActuator.playEffect("dual-rumble", { duration: 800, strongMagnitude: 1 })
+                // stick movement. Only used if the D-pad is not being used
+                if (dirX === 0 && dirY === 0) {
+                    const x = axes[0];
+                    const y = -axes[1];
+                    const magnitude = Math.sqrt(x * x + y * y);
+
+                    if (magnitude > DEADZONE) {
+                        const angle = Math.atan2(y, x);
+
+                        const snapAngles = [
+                            [1, 0],
+                            [1, -1],
+                            [0, -1],
+                            [-1, -1],
+                            [-1, 0],
+                            [-1, 1],
+                            [0, 1],
+                            [1, 1]
+                        ];
+
+                        const sector = Math.round(angle / (Math.PI / 4)) & 7;
+                        dirX = snapAngles[sector][0];
+                        dirY = snapAngles[sector][1];
+                    }
+                }
+
+                const kick = btns[0].pressed;
+                this.room.setKeyState(Utils.keyState(dirX, dirY, kick));
+            }
+            animationFrameId = requestAnimationFrame(pollGamepad.bind(this))
         }
-    }
 }
